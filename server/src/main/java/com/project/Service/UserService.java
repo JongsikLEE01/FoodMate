@@ -23,7 +23,7 @@ public class UserService {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public String loginWithKakao(String kakaoAccessToken) {
-        // 1. 카카오 API로 유저 정보 가져오기
+        // 1. 카카오 API 호출
         String url = "https://kapi.kakao.com/v2/user/me";
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(kakaoAccessToken);
@@ -36,7 +36,7 @@ public class UserService {
         Map kakaoAccount = (Map) kakaoUser.get("kakao_account");
         String name = ((Map) kakaoAccount.get("profile")).get("nickname").toString();
 
-        // 2. DB 확인 후 회원가입
+        // 2. 회원가입 or 로그인
         User user = userRepository.findByKakaoId(userId)
                 .orElseGet(() -> {
                     User newUser = new User();
@@ -45,7 +45,7 @@ public class UserService {
                     return userRepository.save(newUser);
                 });
 
-        // 3. JWT 발행
+        // 3. JWT 발급
         return jwtTokenProvider.createToken(user.getUserId());
     }
 }
