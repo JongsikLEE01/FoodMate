@@ -20,6 +20,9 @@ public class User {
     private String userId;
 
     @Column(nullable = false, length = 100)
+    private String userPw;
+
+    @Column(nullable = false, length = 100)
     private String userName;
 
     @Column

@@ -7,5 +7,4 @@ public record RefundDto(
     String refundStatus,
     String refundDt,
     Long userNum
-)
-{ }
+) { }

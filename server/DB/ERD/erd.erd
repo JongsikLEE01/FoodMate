@@ -111,6 +111,7 @@
         "columnIds": [
           "m1b9YkbDAbJkB3HVPtqQC",
           "qtonBhkt2WjwzBkBNsmva",
+          "_XiRggolInlMqOY3ZXwnn",
           "Zvidh8KbpgNY7O9No-Khb",
           "1u_D6T_Lkta9uOnKmb4dB",
           "X2a7p-5znDd3O-T8vX_YN",
@@ -123,6 +124,7 @@
         "seqColumnIds": [
           "m1b9YkbDAbJkB3HVPtqQC",
           "qtonBhkt2WjwzBkBNsmva",
+          "_XiRggolInlMqOY3ZXwnn",
           "Zvidh8KbpgNY7O9No-Khb",
           "1u_D6T_Lkta9uOnKmb4dB",
           "EVMgBLVGIPJK8SziDIIfe",
@@ -142,7 +144,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1760849754156,
+          "updateAt": 1760850809033,
           "createAt": 1760835612589
         }
       },
@@ -1202,6 +1204,26 @@
           "updateAt": 1760849752196,
           "createAt": 1760849737074
         }
+      },
+      "_XiRggolInlMqOY3ZXwnn": {
+        "id": "_XiRggolInlMqOY3ZXwnn",
+        "tableId": "3hbojNwxqlNuuPA8aDYPd",
+        "name": "USER_PW",
+        "comment": "유저비밀번호",
+        "dataType": "VARCHAR(255)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 74,
+          "widthDataType": 81,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1760850807713,
+          "createAt": 1760850795273
+        }
       }
     },
     "relationshipEntities": {
@@ -1243,8 +1265,8 @@
           "columnIds": [
             "m1b9YkbDAbJkB3HVPtqQC"
           ],
-          "x": 915.0226,
-          "y": 954.1178,
+          "x": 924.0226,
+          "y": 960.1178,
           "direction": 2
         },
         "end": {
@@ -1271,8 +1293,8 @@
           "columnIds": [
             "m1b9YkbDAbJkB3HVPtqQC"
           ],
-          "x": 672.5226,
-          "y": 1176.1178,
+          "x": 677.0226,
+          "y": 1200.1178,
           "direction": 8
         },
         "end": {
@@ -1299,8 +1321,8 @@
           "columnIds": [
             "m1b9YkbDAbJkB3HVPtqQC"
           ],
-          "x": 915.0226,
-          "y": 1102.1178,
+          "x": 924.0226,
+          "y": 1120.1178,
           "direction": 2
         },
         "end": {
