@@ -1,30 +1,58 @@
 package com.project.Util;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenProvider {
-    // 최소 256비트 키 (32바이트)
-    private final String secretKey = "YOUR_VERY_LONG_SECRET_KEY_MUST_BE_AT_LEAST_32_CHAR";
-    private final long validityInMilliseconds = 1000L * 60 * 60 * 24; // 24시간
+   
+    @Value("${JWT_KEY}")
+    private String secretKey;
+
+    @Value("${JWT_EXPIRATION}")
+    private long expiration;
+
+    private Key key;
+
+    @PostConstruct
+    protected void init() {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+    }
 
     public String createToken(String userId) {
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
-
-        Key key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-
         return Jwts.builder()
                 .setSubject(userId)
-                .setIssuedAt(now)
-                .setExpiration(validity)
-                .signWith(key)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(SignatureAlgorithm.ES256, secretKey)
                 .compact();
+    }
+
+    public String getUserId(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 }

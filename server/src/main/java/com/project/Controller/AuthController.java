@@ -10,32 +10,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.Service.UserService;
 import com.project.Util.JwtTokenProvider;
+import com.project.entity.User;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/auth")  
 @RequiredArgsConstructor
-public class UserController {
-    private final UserService userService;
+public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserService userService;
 
-    // Kakao 로그인
     @PostMapping("/kakao")
-    public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> request) {
-        String accessToken = request.get("accessToken");
+    public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> body){
+        String accessToken = body.get("accessToken");
         Map<String, Object> kakaoUser = userService.getKakaoUserInfo(accessToken);
 
         String kakaoId = kakaoUser.get("id").toString();
         String name = ((Map<String, Object>) kakaoUser.get("properties")).get("nickname").toString();
 
         // 사용자 생성 or 조회
-        var user = userService.findOrCreate(kakaoId, name);
-
+        User user = userService.findOrCreate(kakaoId, name);
         // JWT 토큰 생성
         String token = jwtTokenProvider.createToken(user.getUserId());
 
         return ResponseEntity.ok(Map.of("token", token, "user", user));
     }
-    
 }

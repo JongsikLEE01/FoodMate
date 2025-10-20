@@ -1,0 +1,34 @@
+2025-10-19T02:33:30.355Z [INFO] ----------------------invoke list_jdks----------------------
+2025-10-19T02:33:30.360Z [INFO] [Tool.invoke]({name: list_jdks, input: {
+  "additionalSearchPaths": [],
+  "version": "",
+  "projectPath": "c:\\JSLEE\\programming\\git\\FoodMate"
+}}).
+2025-10-19T02:33:30.363Z [INFO] [Task.start](): Starting task toolCall
+2025-10-19T02:33:30.366Z [INFO] [Task.start](): Started task toolCall
+2025-10-19T02:33:30.368Z [INFO] [Tool.invoke] validate GitHub Copilot license.
+2025-10-19T02:33:30.770Z [INFO] Copilot user info:{
+  "access_type_sku": "free_limited_copilot",
+  "analytics_tracking_id": "751aa76a8d917ecfb5efc75211d13a62",
+  "assigned_date": "2025-10-04T12:55:07+09:00",
+  "can_signup_for_limited": false,
+  "chat_enabled": true,
+  "copilot_plan": "individual",
+  "organization_login_list": [],
+  "organization_list": [],
+  "limited_user_quotas": {
+    "chat": 460,
+    "completions": 2154
+  },
+  "limited_user_subscribed_day": 4,
+  "limited_user_reset_date": "2025-11-04",
+  "monthly_quotas": {
+    "chat": 500,
+    "completions": 4000
+  }
+}
+2025-10-19T02:33:30.775Z [WARN] "GitHub Copilot app modernization - upgrade for Java" and its tools are only available for GitHub Copilot "Pro", "Pro+", "Business" and "Enterprise" plans.
+2025-10-19T02:33:30.778Z [ERROR] [Tool.invoke] error occurs when invoking tool list_jdks: UserError: "GitHub Copilot app modernization - upgrade for Java" and its tools are only available for GitHub Copilot "Pro", "Pro+", "Business" and "Enterprise" plans.. Please upgrade your GitHub Copilot plan to use this feature or upgrading this project using other tools you prefer..
+2025-10-19T02:33:30.781Z [INFO] [Task.complete](): Completing task toolCall
+2025-10-19T02:33:30.784Z [INFO] ----------------------invoked list_jdks----------------------
+2025-10-19T02:33:30.790Z [INFO] [Task.complete](): Completed task toolCall
