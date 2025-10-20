@@ -1,9 +1,13 @@
-package com.project.Repository;
+package com.project.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.project.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByKakaoId(String userId);
+    // 카카오 고유 id로 사용자 찾기
+    Optional<User> findByProviderId(String providerId);
+
+    // userId로 사용자 찾기
+    Optional<User> findByUserId(String userId);
 }

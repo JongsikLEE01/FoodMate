@@ -1,15 +1,10 @@
 package com.project.Controller;
 
-import java.util.Map;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.Service.UserService;
-import com.project.Util.JwtTokenProvider;
+import com.project.config.JwtTokenProvider;
+import com.project.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,23 +14,5 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
-
-    // Kakao 로그인
-    @PostMapping("/kakao")
-    public ResponseEntity<?> kakaoLogin(@RequestBody Map<String, String> request) {
-        String accessToken = request.get("accessToken");
-        Map<String, Object> kakaoUser = userService.getKakaoUserInfo(accessToken);
-
-        String kakaoId = kakaoUser.get("id").toString();
-        String name = ((Map<String, Object>) kakaoUser.get("properties")).get("nickname").toString();
-
-        // 사용자 생성 or 조회
-        var user = userService.findOrCreate(kakaoId, name);
-
-        // JWT 토큰 생성
-        String token = jwtTokenProvider.createToken(user.getUserId());
-
-        return ResponseEntity.ok(Map.of("token", token, "user", user));
-    }
-    
+        
 }
