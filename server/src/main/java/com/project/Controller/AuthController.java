@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-// 응답 DTO 정의 (프론트엔드와 동일해야 함)
 class JwtResponse {
     public String accessToken;
     public String refreshToken;
@@ -30,6 +29,8 @@ public class AuthController {
     @PostMapping("/kakao/callback")
     public ResponseEntity<JwtResponse> kakaoCallback(@RequestBody Map<String, String> requestBody) {
         
+        System.out.println("requestBody --------------" + requestBody);
+
         // 1. 요청 본문(Body)에서 code 값 추출
         String code = requestBody.get("code");
         

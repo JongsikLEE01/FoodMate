@@ -8,13 +8,18 @@ declare global {
   }
 }
 
-// 1. window.Kakao가 존재하는지, 그리고 이미 초기화되지 않았는지 확인합니다.
+// 1. window.Kakao가 존재하는지 이미 초기화되지 않았는지 확인
 if (window.Kakao && !window.Kakao.isInitialized()) {
-  window.Kakao.init(process.env.REACT_APP_KAKAO_KEY);
-  console.log("Kakao SDK initialized:", window.Kakao.isInitialized());
+  // Use JavaScript Key from env
+  const kakaoJsKey = process.env.REACT_APP_KAKAO_JS_KEY;
+  if (!kakaoJsKey) {
+    console.error('REACT_APP_KAKAO_JS_KEY가 설정되어 있지 않습니다. .env 파일을 확인하세요.');
+  } else {
+    window.Kakao.init(kakaoJsKey);
+    console.log('Kakao SDK가 로드되었습니다. isInitialized=', window.Kakao.isInitialized());
+  }
 } else if (!window.Kakao) {
-    // 2. Kakao 객체가 로드되지 않은 경우 (가장 흔한 원인)
-    console.error("Kakao SDK is not loaded. Check your index.html script tag.");
+    console.error("Kakao SDK가 로드되지 않았습니다.");
 }
 
 

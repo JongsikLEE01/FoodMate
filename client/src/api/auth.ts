@@ -8,10 +8,16 @@ interface JwtResponse {
 
 // 카카오 인가 코드를 백엔드로 전송하여 JWT를 발급받는 함수
 export const kakaoLogin = async (code: string): Promise<JwtResponse> => {
+
+
     try {
-        const response = await axios.post('/api/v1/auth/kakao/callback', { code }); 
+        const response = await axios.post('http://localhost:8080/api/v1/auth/kakao/callback', { code }, { withCredentials : true}); 
+        console.log(response)
+
         return response.data;
     } catch (error) {
+        console.log(error);
+
         if (axios.isAxiosError(error) && error.response) {
             throw error.response.data;
         }

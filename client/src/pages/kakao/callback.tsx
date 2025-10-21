@@ -1,15 +1,19 @@
 // src/pages/oauth/kakao/callback.tsx (Router의 쿼리 파라미터를 읽어오는 환경)
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; // React Router Dom 기준
 import { kakaoLogin } from '../../api/auth'; // 💡 auth.ts에서 정의한 함수 사용
 import { setTokens } from '../../utils/tokenUtils';
 
 const KakaoCallbackPage: React.FC = () => {
+    const check = useRef(false);
     const location = useLocation();
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (check.current) return; // 이미 실행했으면 무시
+        check.current = true;
+
         // URL에서 'code' 파라미터 추출
         const params = new URLSearchParams(location.search);
         const code = params.get('code');

@@ -30,49 +30,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public static final String BEARER_PREFIX = "Bearer ";
 
     // 필터링 로직: 요청당 한 번 실행
-    @Override
+   @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
-        // 1. 요청 헤더에서 JWT 추출
-        String jwt = resolveToken(request);
+    String path = request.getRequestURI();
 
-        // 2. JWT 유효성 검증
-        if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
-            
-            // 3. 토큰에서 사용자 ID 추출
-            Long userNum = jwtTokenProvider.getUserNum(jwt);
-
-            if (userNum != null) {
-                // 4. Authentication 객체 생성 및 SecurityContext에 저장
-                UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                    String.valueOf(userNum), 
-                    "", 
-                    Collections.emptyList() 
-                );
-
-                // WebAuthenticationDetailsSource에서 상세 정보를 추출
-                WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails(request);
-
-                // 상세 정보를 포함하는 생성자 사용
-                Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.getAuthorities()
-                );
-
-                // 상세 정보를 직접 설정
-                ((UsernamePasswordAuthenticationToken) authentication).setDetails(details);
-                
-                // SecurityContext에 인증 객체 저장
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-                log.info("[{}] - 인증 정보 설정 완료: {}", userNum, request.getRequestURI());
-            }
-        }
-        
-        // 다음 필터 또는 서블릿으로 요청 전달
+    System.out.println(request);
+    System.out.println(response);
+    System.out.println(filterChain);
+    // 카카오 로그인 콜백과 프리플라이트 요청은 JWT 검증 없이 통과
+   // 1️⃣ Preflight 요청은 바로 통과
+    if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+        response.setStatus(HttpServletResponse.SC_OK);
         filterChain.doFilter(request, response);
+        return;
     }
+
+    // 기존 JWT 검증 로직
+    String jwt = resolveToken(request);
+    if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
+        Long userNum = jwtTokenProvider.getUserNum(jwt);
+        if (userNum != null) {
+            UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                String.valueOf(userNum), "", Collections.emptyList());
+            WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails(request);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+            ((UsernamePasswordAuthenticationToken) authentication).setDetails(details);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+    }
+
+    filterChain.doFilter(request, response);
+}
 
     // 요청 헤더에서 "Bearer " 접두사를 제거한 JWT 문자열을 추출
     private String resolveToken(HttpServletRequest request) {
