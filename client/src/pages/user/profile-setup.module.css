@@ -1,0 +1,53 @@
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.formContainer {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stepIndicator {
+    text-align: center;
+    margin-bottom: 24px;
+    color: #666;
+}
+
+.inputGroup {
+    margin-bottom: 20px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.button {
+    width: 100%;
+    padding: 14px;
+    background-color: #007AFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.button:active {
+    background-color: #0056b3;
+}

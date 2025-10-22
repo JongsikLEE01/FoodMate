@@ -6,6 +6,7 @@ import KakaoCallbackPage from "./pages/kakao/callback";
 import ProfileSetup from "./pages/user/profile-setup";
 import UserInfoCheck from "./pages/user/info-check";
 import { getAccessToken } from "./utils/tokenUtils";
+import './styles/global.css';
 
 // 1. 보호된 라우트 컴포넌트: 토큰 유무에 따라 접근을 제어
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {

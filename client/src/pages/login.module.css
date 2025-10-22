@@ -1,0 +1,38 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: var(--color-white);
+}
+
+.logoContainer {
+    width: 200px;
+    margin-bottom: 40px;
+}
+
+.logo {
+    width: 100%;
+    height: auto;
+}
+
+.loginButton {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border: none;
+    background: none;
+    padding: 0;
+}
+
+.loginButton img {
+    width: 100%;
+    height: auto;
+}
+
+.loginButton .text{
+    text-align: center;
+    size: 3px;
+}

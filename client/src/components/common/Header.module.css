@@ -1,0 +1,60 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background-color: var(--color-white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 1000;
+}
+
+.logoContainer {
+    height: 32px;
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 100%;
+    object-fit: contain;
+}
+
+.rightContainer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.profileIcon {
+    width: 24px;
+    height: 24px;
+    color: var(--color-main);
+    cursor: pointer;
+}
+
+.backButton {
+    padding: 8px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .header {
+        height: 52px;
+        padding: 0 12px;
+    }
+
+    .logoContainer {
+        height: 28px;
+    }
+}

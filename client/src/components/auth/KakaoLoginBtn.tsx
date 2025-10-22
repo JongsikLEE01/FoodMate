@@ -1,5 +1,6 @@
 // 카카오 로그인 버튼
 import React from 'react';
+import KakaoLogin from '../../assets/images/kakao_login.png';
 
 const KakaoLoginButton: React.FC = () => {
 
@@ -30,11 +31,7 @@ const KakaoLoginButton: React.FC = () => {
     };
 
     return (
-        <button 
-            onClick={handleLogin} 
-        >
-            카카오 로그인 시작
-        </button>
+            <img src={KakaoLogin} onClick={handleLogin}/>
     );
 };
 

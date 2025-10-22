@@ -1,0 +1,17 @@
+.kakaoButton {
+    background: none;
+    border: none;
+    padding: 0;
+    width: 100%;
+    max-width: 300px;
+    transition: transform 0.2s ease;
+}
+
+.kakaoButton:hover {
+    transform: scale(1.02);
+}
+
+.kakaoImage {
+    width: 100%;
+    height: auto;
+}
