@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/login"; 
 import HomePage from "./pages/index";
 import KakaoCallbackPage from "./pages/kakao/callback";
+import ProfileSetup from "./pages/user/profile-setup";
+import UserInfoCheck from "./pages/user/info-check";
 import { getAccessToken } from "./utils/tokenUtils";
 
 // 1. 보호된 라우트 컴포넌트: 토큰 유무에 따라 접근을 제어
@@ -20,8 +22,27 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/oauth/kakao/callback" element={<KakaoCallbackPage />} />
 
-                {/* 3. 메인 경로 ("/") 및 기타 보호 경로 */}
-                {/* 토큰이 없으면 자동으로 /login으로 리다이렉트 됩니다. */}
+                {/* 3. 사용자 정보 체크 페이지 */}
+                <Route 
+                    path="/user/info-check" 
+                    element={
+                        <ProtectedRoute>
+                            <UserInfoCheck />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* 4. 프로필 설정 페이지 */}
+                <Route 
+                    path="/user/profile-setup" 
+                    element={
+                        <ProtectedRoute>
+                            <ProfileSetup />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* 5. 메인 페이지 */}
                 <Route 
                     path="/" 
                     element={

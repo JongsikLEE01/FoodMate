@@ -15,19 +15,23 @@ public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "PAY_ID")
     private Long payId;
 
-    @Column(nullable = false)
+    @Column(name = "PAY_AMOUNT", nullable = false)
     private BigDecimal payAmount;
 
+    @Column(name = "PAY_METHOD")
     private String payMethod;
 
-    @Column(nullable = false)
+    @Column(name = "COIN_AMOUNT", nullable = false)
     private Integer coinAmount;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "PAY_STATUS")
     private PayStatus payStatus = PayStatus.SUCCESS;
 
+    @Column(name = "PAY_DT")
     private LocalDateTime payDt;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -15,16 +15,20 @@ public class Refund {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "REF_ID")
     private Long refId;
 
-    @Column(nullable = false)
+    @Column(name = "REF_AMOUNT", nullable = false)
     private BigDecimal refAmount;
 
+    @Column(name = "REF_REASON")
     private String refReason;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "REF_STATUS")
     private RefundStatus refStatus = RefundStatus.REQUESTED;
 
+    @Column(name = "REF_DT")
     private LocalDateTime refDt;
 
     @ManyToOne(fetch = FetchType.LAZY)

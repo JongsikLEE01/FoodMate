@@ -19,37 +19,24 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_num")
-    private Long userNum;
-
-    @Column(name = "user_id", unique = true, nullable = false)
+    @Column(name = "USER_NUM")
+    private Long userNum;           // 유저 번호
+    @Column(name = "USER_ID", unique = true, nullable = false)
     private String userId;          // 카카오 이메일
-    
-    @Column(name = "provider_id", unique = true)
+    @Column(name = "PROVIDER_ID", unique = true)
     private String providerId;      // 카카오 고유 ID
-    @Column(name = "user_name")
+    @Column(name = "USER_NAME")
     private String userName;        // 닉네임
 
-    @Column(name = "user_age")
-    private Integer userAge;        // 나이
-
-    @Column(name = "disease")
-    private String disease;         // 보유질병
-
-    @Column(name = "family_history")
-    private String familyHistory;   // 가족력
-
-    @Column(name = "allergy")
-    private String allergy;         // 알러지
-
     @Builder.Default
-    @Column(name = "coin")
+    @Column(name = "COIN")
     private Integer coin = 0;       // 코인
 
-    @Column(name = "ins_dt")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserDetail userDetail;  // 사용자 상세 정보
+    @Column(name = "INS_DT")
     private LocalDateTime insDt;    // 가입일
-
-    @Column(name = "upd_dt")
+    @Column(name = "UPD_DT")
     private LocalDateTime updDt;    // 수정일
     
     // 카카오 회원가입/업데이트를 위한 빌더

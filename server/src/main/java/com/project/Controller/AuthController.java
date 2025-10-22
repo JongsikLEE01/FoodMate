@@ -17,6 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 class JwtResponse {
     public String accessToken;
     public String refreshToken;
+    public boolean isNewUser;
+    public UserInfo userInfo;
+}
+
+class UserInfo {
+    public Long userNum;
+    public String userId;
+    public Integer userAge;
+    public String disease;
+    public String familyHistory;
+    public String allergy;
 }
 
 @RestController
@@ -28,9 +39,6 @@ public class AuthController {
 
     @PostMapping("/kakao/callback")
     public ResponseEntity<JwtResponse> kakaoCallback(@RequestBody Map<String, String> requestBody) {
-        
-        System.out.println("requestBody --------------" + requestBody);
-
         // 1. 요청 본문(Body)에서 code 값 추출
         String code = requestBody.get("code");
         
@@ -49,10 +57,34 @@ public class AuthController {
         String accessToken = jwtTokenProvider.createAccessToken(user.getUserNum()); // userNum 기반
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getUserNum()); 
         
+        System.out.println("JWT 토큰 생성 완료 - User: " + user.getUserNum());
+        
         // 6. 프론트엔드로 응답
         JwtResponse response = new JwtResponse();
         response.accessToken = accessToken;
         response.refreshToken = refreshToken;
+        
+        // 신규 사용자 여부 확인 (UserDetail이 없으면 신규 사용자로 간주)
+        boolean isNewUser = user.getUserDetail() == null;
+        
+        response.isNewUser = isNewUser;
+        
+        // 사용자 정보 추가
+        UserInfo userDetailInfo = new UserInfo();
+        userDetailInfo.userNum = user.getUserNum();
+        userDetailInfo.userId = user.getUserId();
+        
+        // UserDetail에서 정보 가져오기
+        if (user.getUserDetail() != null) {
+            userDetailInfo.userAge = user.getUserDetail().getUserAge();
+            userDetailInfo.disease = user.getUserDetail().getDisease();
+            userDetailInfo.familyHistory = user.getUserDetail().getFamilyHistory();
+            userDetailInfo.allergy = user.getUserDetail().getAllergy();
+        }
+        
+        response.userInfo = userDetailInfo;
+        
+        System.out.println("로그인 응답 전송 - Access Token: " + accessToken.substring(0, 10) + "... isNewUser: " + isNewUser);
         
         return ResponseEntity.ok(response);
     }
