@@ -5,47 +5,48 @@
     right: 0;
     height: 56px;
     background-color: var(--color-white);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
     padding: 0 16px;
-    z-index: 1000;
 }
 
-.logoContainer {
-    height: 32px;
+.leftSection {
+    justify-self: start;
     display: flex;
     align-items: center;
+    gap: 8px;
+}
+
+.centerSection {
+    justify-self: center;
+    display: flex;
+    align-items: center;
+}
+
+.rightSection {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .logo {
-    height: 100%;
-    object-fit: contain;
-}
-
-.rightContainer {
     display: flex;
     align-items: center;
-    gap: 16px;
+    text-decoration: none;
+    color: var(--color-deep-green);
+    font-weight: 600;
+    font-size: 1.25rem;
 }
 
-.profileIcon {
+.icon {
     width: 24px;
     height: 24px;
-    color: var(--color-main);
     cursor: pointer;
-}
-
-.backButton {
-    padding: 8px;
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    color: var(--color-text);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    color: var(--color-gray-700);
 }
 
 @media (max-width: 768px) {
@@ -54,7 +55,7 @@
         padding: 0 12px;
     }
 
-    .logoContainer {
-        height: 28px;
+    .logo {
+        font-size: 1.125rem;
     }
 }

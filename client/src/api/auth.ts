@@ -21,7 +21,6 @@ interface JwtResponse {
 export const kakaoLogin = async (code: string): Promise<JwtResponse> => {
     try {
         const response = await axios.post('http://localhost:8080/api/v1/auth/kakao/callback', { code }, { withCredentials : true}); 
-        console.log(response)
 
         return response.data;
     } catch (error) {

@@ -23,11 +23,11 @@ axiosInstance.interceptors.request.use(config => {
 // 응답 인터셉터: 401 에러 처리
 axiosInstance.interceptors.response.use(response => response, async (error) => {
     const originalRequest = error.config;
+
     if (error.response.status === 401 && !originalRequest._retry) {
-        // TODO : 토큰 재발급 로직 여기서 구현 필요
         // 재발급 실패 시 removeTokens() 호출 및 로그인 페이지로 리다이렉트
         removeTokens();
-        // window.location.href = '/login'; 
+        window.location.href = '/login'; 
     }
     return Promise.reject(error);
 });

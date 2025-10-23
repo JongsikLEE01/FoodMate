@@ -40,14 +40,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     System.out.println(response);
     System.out.println(filterChain);
     // 카카오 로그인 콜백과 프리플라이트 요청은 JWT 검증 없이 통과
-   // 1️⃣ Preflight 요청은 바로 통과
+   // Preflight 요청은 바로 통과
     if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
         response.setStatus(HttpServletResponse.SC_OK);
         filterChain.doFilter(request, response);
         return;
     }
 
-    // 기존 JWT 검증 로직
+    // JWT 검증 로직
     String jwt = resolveToken(request);
     if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
         Long userNum = jwtTokenProvider.getUserNum(jwt);
@@ -65,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
 }
 
-    // 요청 헤더에서 "Bearer " 접두사를 제거한 JWT 문자열을 추출
+    // 요청 헤더에서 "Bearer " 제거한 JWT 문자열을 추출
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {

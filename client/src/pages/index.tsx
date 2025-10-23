@@ -7,21 +7,24 @@ const HomePage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // TODO: API 호출 구현
+        if (!message.trim()) return;
+        
+        // TODO: AI 채팅 API 호출 구현
         setMessage('');
     };
 
     return (
-        <Layout title="푸드메이트" showBack={false}>
+        <Layout>
             <div className={styles.container}>
-                <form onSubmit={handleSubmit} className={styles.messageForm}>
-                    <textarea
+                <form onSubmit={handleSubmit} className={styles.chatForm}>
+                    <input
+                        type="text"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="메시지를 입력하세요..."
-                        className={styles.textarea}
+                        className={styles.input}
                     />
-                    <button type="submit" className={styles.button}>
+                    <button type="submit" className={styles.sendButton}>
                         전송
                     </button>
                 </form>

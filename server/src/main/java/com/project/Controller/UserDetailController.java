@@ -21,7 +21,7 @@ public class UserDetailController {
     public ResponseEntity<?> updateUserProfile(@RequestBody UserDetail userDetailRequest, Authentication authentication) {
         Long userNum = Long.parseLong(authentication.getName());
         User user = userRepository.findById(userNum)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User를 찾지 못했습니다"));
 
         UserDetail userDetail = new UserDetail();
         userDetail.setUser(user);
@@ -40,7 +40,7 @@ public class UserDetailController {
     public ResponseEntity<UserDetail> getUserProfile(Authentication authentication) {
         Long userNum = Long.parseLong(authentication.getName());
         User user = userRepository.findById(userNum)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User를 찾지 못했습니다"));
 
         UserDetail userDetail = user.getUserDetail();
         if (userDetail == null) {

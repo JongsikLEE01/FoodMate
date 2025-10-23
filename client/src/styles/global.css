@@ -1,43 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap');
+
 :root {
-    --color-main: #4CAF50;      /* Fresh Green */
-    --color-sub: #A5D6A7;       /* Light Green */
-    --color-accent: #2E7D32;    /* Deep Green */
-    --color-soft: #FFF8E1;      /* Soft Beige */
-    --color-text: #333333;      /* Charcoal Gray */
-    --color-white: #FFFFFF;     /* White */
+  /* Brand Colors */
+  --color-fresh-green: #4CAF50;
+  --color-light-green: #A5D6A7;
+  --color-deep-green: #2E7D32;
+  --color-soft-beige: #FFF8E1;
+
+  /* Semantic Colors */
+  --color-primary: var(--color-fresh-green);
+  --color-secondary: var(--color-light-green);
+  --color-accent: var(--color-deep-green);
+
+  /* Gray Scale */
+  --color-gray-900: #212121;
+  --color-gray-800: #333333;
+  --color-gray-700: #555555;
+  --color-gray-600: #666666;
+  --color-gray-500: #888888;
+  --color-gray-400: #AAAAAA;
+  --color-gray-300: #CCCCCC;
+  --color-gray-200: #EEEEEE;
+  --color-gray-100: #F5F5F5;
+  --color-gray-50: #FAFAFA;
+
+  /* System Colors */
+  --color-background: var(--color-gray-50);
+  --color-surface: #FFFFFF;
+  --color-text: var(--color-gray-800);
+  --color-text-secondary: var(--color-gray-600);
+  --color-border: var(--color-gray-200);
+  
+  /* Status Colors */
+  --color-success: #2E7D32;
+  --color-error: #D32F2F;
+  --color-warning: #FFA000;
+  --color-info: #1976D2;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  /* Typography */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+
+  /* Animation */
+  --transition-fast: 150ms;
+  --transition-normal: 250ms;
+  --transition-slow: 350ms;
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-html, body {
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: var(--color-soft);
-    color: var(--color-text);
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-background: #121212;
+    --color-surface: #1E1E1E;
+    --color-text: #E0E0E0;
+    --color-text-secondary: #AAAAAA;
+    --color-border: #333333;
+
+    --color-primary: #66BB6A;
+    --color-secondary: #81C784;
+    --color-accent: #43A047;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  }
 }
 
+/* Reset & Base Styles */
 * {
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-wrap: break-word;
+  -webkit-tap-highlight-color: transparent;
 }
 
 #root {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Common Interactive Elements */
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
 }
 
 button {
-    cursor: pointer;
-    transition: all 0.2s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity var(--transition-fast) var(--ease-in-out);
 }
 
 button:hover {
-    opacity: 0.9;
+  opacity: 0.85;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Improved Mobile Touch Targets */
+input,
+button,
+select,
+textarea,
+[role="button"] {
+  touch-action: manipulation;
+}
+
+/* Remove Chrome's Yellow Background on Autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-surface) inset;
+  -webkit-text-fill-color: var(--color-text);
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 @media (max-width: 768px) {
-    html {
-        font-size: 14px;
-    }
+  html {
+    font-size: 15px;
+  }
 }

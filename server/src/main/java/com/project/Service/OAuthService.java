@@ -59,7 +59,7 @@ public class OAuthService {
             // 1-2. 카카오 토큰 API 호출 (POST 요청)
             Map<String, Object> tokenResponse = webClient.post()
                     .uri(tokenUri)
-                    // send as application/x-www-form-urlencoded
+                    // application/x-www-form-urlencoded 전송
                     .body(BodyInserters.fromFormData(body))
                     .retrieve()
                     .bodyToMono(Map.class)
@@ -71,11 +71,8 @@ public class OAuthService {
             }
             return null;
         } catch (org.springframework.web.reactive.function.client.WebClientResponseException e) {
-            // 서버가 반환한 바디(에러 상세)를 로깅하면 원인 파악에 도움됩니다.
-            log.error("카카오 토큰 요청 실패: status={}, body={}", e.getRawStatusCode(), e.getResponseBodyAsString());
             return null;
         } catch (Exception e) {
-            log.error("카카오로부터 Access Token을 받아오지 못하였습니다.", e);
             return null;
         }
     }
@@ -87,8 +84,6 @@ public class OAuthService {
             log.error("카카오 액세스 토큰이 null이거나 비어있습니다.");
             return Collections.emptyMap();
         }
-        
-        log.info("카카오 사용자 정보 요청 시작 - 토큰: {}", kakaoAccessToken.substring(0, Math.min(10, kakaoAccessToken.length())) + "...");
         
         try {
             // 2-1. 카카오 사용자 정보 API 호출
@@ -114,8 +109,6 @@ public class OAuthService {
                 log.error("카카오로부터 받은 사용자 정보가 비어있습니다.");
                 return Collections.emptyMap();
             }
-            
-            log.info("카카오 사용자 정보 요청 성공 - ID: {}", userInfo.get("id"));
             return userInfo;
 
         } catch (Exception e) {
@@ -133,8 +126,7 @@ public class OAuthService {
             throw new IllegalArgumentException("카카오 사용자 정보가 유효하지 않습니다");
         }
 
-        String providerId = String.valueOf(userInfo.get("id")); // toString() 대신 안전한 변환
-        log.info("카카오 사용자 정보 처리 중 - Provider ID: {}", providerId);
+        String providerId = String.valueOf(userInfo.get("id"));
         
         // 1. DB에서 카카오 ID로 기존 회원 조회
         return userRepository.findByProviderId(providerId)
@@ -156,7 +148,6 @@ public class OAuthService {
 
                     String email = kakaoAccount.containsKey("email") ? (String) kakaoAccount.get("email") : "unknown@email.com";
                     String nickname = profile.containsKey("nickname") ? (String) profile.get("nickname") : "Unknown User";
-                    log.info("사용자 정보 추출 완료 - Email: {}, Nickname: {}", email, nickname);
 
                     User newUser = User.createKakaoUser(email, nickname, providerId);
                     return userRepository.save(newUser);
