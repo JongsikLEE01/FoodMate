@@ -5,14 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "USERS")
 @Getter
-@Setter
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
@@ -22,16 +20,14 @@ public class User {
     @Column(name = "USER_NUM")
     private Long userNum;           // 유저 번호
     @Column(name = "USER_ID", unique = true, nullable = false)
-    private String userId;          // 카카오 이메일
+    private String userId;          // 카카오 이메
     @Column(name = "PROVIDER_ID", unique = true)
     private String providerId;      // 카카오 고유 ID
     @Column(name = "USER_NAME")
     private String userName;        // 닉네임
-
     @Builder.Default
     @Column(name = "COIN")
     private Integer coin = 0;       // 코인
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserDetail userDetail;  // 사용자 상세 정보
     @Column(name = "INS_DT")
@@ -49,4 +45,39 @@ public class User {
                 .coin(10)
                 .build();
     }
+
+    // 코인 차감 빌더
+    public void decreaseCoin(int amount) {
+        if (this.coin - amount < 0) {
+            throw new IllegalStateException("코인이 부족합니다.");
+        }
+        this.coin -= amount;
+    }
+
+    // 코인 증감 빌더
+    public void addCoin(int amount) {
+        if (this.coin - amount < 0) {
+            throw new IllegalStateException("코인이 부족합니다.");
+        }
+        this.coin += amount;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        insDt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updDt = LocalDateTime.now();
+    }
+
+    public void update(Long userNum, String userId, String providerId, String userName, Integer coin){
+        this.userNum = userNum;
+        this.userId = userId;
+        this.providerId = providerId;
+        this.userName = userName;
+        this.coin = coin;
+    }
+
 }

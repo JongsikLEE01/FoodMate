@@ -1,52 +1,57 @@
 package com.project.Controller;
 
-import com.project.entity.User;
-import com.project.entity.UserDetail;
-import com.project.repository.UserRepository;
-import com.project.repository.UserDetailRepository;
+import com.project.dto.UserDetailDto.UserDetailRequest;
+import com.project.dto.UserDetailDto.UserDetailResponse;
+import com.project.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/user/profile")
 @RequiredArgsConstructor
 public class UserDetailController {
 
-    private final UserRepository userRepository;
-    private final UserDetailRepository userDetailRepository;
+    private final UserDetailService userDetailService;
 
-    @PostMapping("/profile")
-    public ResponseEntity<?> updateUserProfile(@RequestBody UserDetail userDetailRequest, Authentication authentication) {
-        Long userNum = Long.parseLong(authentication.getName());
-        User user = userRepository.findById(userNum)
-                .orElseThrow(() -> new RuntimeException("User를 찾지 못했습니다"));
+    /**
+     * 유저 디테일 찾기
+     * @param auth
+     * @return
+     */
+    @GetMapping("/{userNum}")
+    public ResponseEntity<UserDetailResponse> getUserDetail(Authentication auth) {
+        Long userNum = Long.parseLong(auth.getName());
 
-        UserDetail userDetail = new UserDetail();
-        userDetail.setUser(user);
-        userDetail.setUserAge(userDetailRequest.getUserAge());
-        userDetail.setDisease(userDetailRequest.getDisease());
-        userDetail.setFamilyHistory(userDetailRequest.getFamilyHistory());
-        userDetail.setAllergy(userDetailRequest.getAllergy());
-
-        user.setUserDetail(userDetail);
-        userRepository.save(user);
-
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userDetailService.getUserDetail(userNum));
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<UserDetail> getUserProfile(Authentication authentication) {
-        Long userNum = Long.parseLong(authentication.getName());
-        User user = userRepository.findById(userNum)
-                .orElseThrow(() -> new RuntimeException("User를 찾지 못했습니다"));
+    /**
+     * 유저 디테일 생성
+     * @param request
+     * @param auth
+     * @return
+     */
+    @PostMapping
+    public ResponseEntity<UserDetailResponse> createUserDetail(@Validated @RequestBody UserDetailRequest request, Authentication auth){
+        String userId = String.valueOf(auth.getName());
+        
+        return ResponseEntity.ok(userDetailService.saveUserDetail(userId, request));
+    }
+    
+    /**
+     * 유저 디테일 수정
+     * @param request
+     * @param auth
+     * @return
+     */
+    @PatchMapping
+    public ResponseEntity<UserDetailResponse> uploadUserDetail(@Validated @RequestBody UserDetailRequest request, Authentication auth){
+        Long userNum = Long.parseLong(auth.getName());
 
-        UserDetail userDetail = user.getUserDetail();
-        if (userDetail == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(userDetail);
+        return ResponseEntity.ok(userDetailService.updateUserDetail(userNum, request));
     }
 }

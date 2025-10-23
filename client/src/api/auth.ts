@@ -32,3 +32,22 @@ export const kakaoLogin = async (code: string): Promise<JwtResponse> => {
         throw new Error("네트워크 오류 또는 CORS 정책 문제로 서버에 연결할 수 없습니다."); 
     }
 };
+
+// JWT 토큰 가져오기(localStorage)
+export const getAccessToken = (): string | null => {
+    return localStorage.getItem('accessToken');
+};
+
+export const getUserNumFromToken = (): number | null => {
+    const token = getAccessToken();
+    if (!token) return null;
+
+    // JWT payload decode (base64)
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.sub ? parseInt(payload.sub) : null;
+    } catch (err) {
+        console.error('JWT 디코딩 실패', err);
+        return null;
+    }
+};

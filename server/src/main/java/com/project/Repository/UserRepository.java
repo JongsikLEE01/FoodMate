@@ -1,4 +1,5 @@
 package com.project.repository;
+
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,4 +11,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // userId로 사용자 찾기
     Optional<User> findByUserId(String userId);
+
+    // userNum으로 유저 찾기
+    Optional<User> findByUserNum(Long userNum);
 }
