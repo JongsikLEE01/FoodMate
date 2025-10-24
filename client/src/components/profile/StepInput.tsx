@@ -1,11 +1,11 @@
-import react from 'react';
-import styles from './css/StepInput.module.css'
+import React from 'react';
+import styles from './css/StepInput.module.css';
 
 interface StepInputProps {
-    field : string;
-    type : 'number' | 'text';
-    value : any;
-    placeholder? : string;
+    field: string;
+    type: 'number' | 'text';
+    value: any;
+    placeholder?: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
@@ -17,7 +17,7 @@ const StepInput: React.FC<StepInputProps> = ({ field, type, value, placeholder, 
                     type="number"
                     id={field}
                     name={field}
-                    value={value || ''}
+                    value={value ?? ''}
                     onChange={onChange}
                     className={styles.input}
                     placeholder={placeholder}
@@ -29,7 +29,7 @@ const StepInput: React.FC<StepInputProps> = ({ field, type, value, placeholder, 
                 <textarea
                     id={field}
                     name={field}
-                    value={value || ''}
+                    value={value ?? ''}
                     onChange={onChange}
                     className={styles.input}
                     placeholder={placeholder}

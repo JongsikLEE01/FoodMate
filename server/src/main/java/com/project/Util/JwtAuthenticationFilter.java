@@ -1,6 +1,6 @@
-package com.project.util; // 또는 com.project.config 등 필터가 위치한 패키지
+package com.project.util;
 
-import com.project.config.JwtTokenProvider; // JwtTokenProvider 경로에 맞게 수정
+import com.project.config.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

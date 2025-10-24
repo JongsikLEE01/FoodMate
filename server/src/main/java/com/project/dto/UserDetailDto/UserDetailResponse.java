@@ -18,4 +18,8 @@ public record UserDetailResponse(
             entity.getAllergy()
         );
     }
+
+    public boolean isUserNumEmpty() {
+        return this.userNum == null;
+    }
 }

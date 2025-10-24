@@ -1,4 +1,5 @@
 export interface ProfileSetupForm {
+    userNum?: number;
     userAge?: number;
     disease?: string;
     familyHistory?: string;

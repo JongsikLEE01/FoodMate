@@ -10,6 +10,7 @@ import com.project.entity.UserDetail;
 import com.project.repository.UserDetailRepository;
 import com.project.repository.UserRepository;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -17,41 +18,43 @@ import lombok.RequiredArgsConstructor;
 public class UserDetailService {
     
     private final UserDetailRepository userDetailRepository; 
-    private final UserRepository userRepository;
+    private final UserRepository userRepository; 
 
-    // 유저 상세정보 찾기
-    public UserDetailResponse getUserDetail(Long userNum){
-        UserDetail userDetail = userDetailRepository.findByUserNum(userNum)
-            .orElseThrow(() -> new IllegalArgumentException("해당 유저의 상세정보가 없습니다."));
-
-        return UserDetailResponse.fromEntity(userDetail);
-    }
-
-    // 유저 상세 정보 저장
+    // 유저 상세 정보 조회
     @Transactional
-    public UserDetailResponse saveUserDetail(String userId, UserDetailRequest request){
-        User user = userRepository.findByUserId(userId)
-            .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-
-        UserDetail userDetail = UserDetail.builder()
-            .user(user)
-            .userAge(request.userAge())
-            .disease(request.disease())
-            .familyHistory(request.familyHistory())
-            .allergy(request.allergy())
-            .build();
-
-        UserDetail save = userDetailRepository.save(userDetail);
-        return UserDetailResponse.fromEntity(save);
+    @PermitAll
+    public UserDetailResponse getUserDetail(Long userNum) {
+        return userDetailRepository.findByUserNum(userNum)
+            .map(UserDetailResponse::fromEntity)
+            .orElse(new UserDetailResponse(null, null, null, null, null));
     }
 
-    // 유저 상세 정보 수정
+
+
+    // 유저 상세 정보 저장/수정
     @Transactional
-    public UserDetailResponse updateUserDetail(Long userNum, UserDetailRequest request){
-        UserDetail userDetail = userDetailRepository.findByUserNum(userNum)
-            .orElseThrow(() -> new IllegalArgumentException("해당 유저의 상세 정보가 없습니다."));
+    public UserDetailResponse saveUserDetail(UserDetailRequest request) {
+        Long userNum = Long.valueOf(request.userNum());
 
-        userDetail.update(request.userAge(), request.disease(), request.familyHistory(), request.allergy());
-        return UserDetailResponse.fromEntity(userDetail);
+        // User 존재 확인
+        User user = userRepository.findById(userNum)
+                .orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다"));
+
+        UserDetail detail = userDetailRepository.findByUserNum(userNum)
+                .map(existing -> existing.update(request))  // update
+                .orElseGet(() -> {
+                    // 새 객체 생성 시 반드시 User 연결
+                    UserDetail newDetail = UserDetail.builder()
+                            .user(user)
+                            .userAge(request.userAge())
+                            .disease(request.disease())
+                            .familyHistory(request.familyHistory())
+                            .allergy(request.allergy())
+                            .build();
+                    return userDetailRepository.save(newDetail);
+                });
+
+        return UserDetailResponse.fromEntity(detail);
     }
+
 }

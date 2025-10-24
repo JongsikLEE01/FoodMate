@@ -53,11 +53,9 @@ public class AuthController {
         // 4. 사용자 정보로 DB에서 조회/가입 처리 및 엔티티 획득 (자동 회원가입)
         User user = kakaoOAuthService.findOrCreateUser(userInfo);
         
-        // 5. 서비스의 JWT 생성 및 반환 (Notion 링크 기반 구현)
+        // 5. 서비스의 JWT 생성 및 반환
         String accessToken = jwtTokenProvider.createAccessToken(user.getUserNum()); // userNum 기반
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getUserNum()); 
-        
-        System.out.println("JWT 토큰 생성 완료 - User: " + user.getUserNum());
         
         // 6. 프론트엔드로 응답
         JwtResponse response = new JwtResponse();
@@ -66,7 +64,6 @@ public class AuthController {
         
         // 신규 사용자 여부 확인 (UserDetail이 없으면 신규 사용자로 간주)
         boolean isNewUser = user.getUserDetail() == null;
-        
         response.isNewUser = isNewUser;
         
         // 사용자 정보 추가
@@ -83,9 +80,7 @@ public class AuthController {
         }
         
         response.userInfo = userDetailInfo;
-        
-        System.out.println("로그인 응답 전송 - Access Token: " + accessToken.substring(0, 10) + "... isNewUser: " + isNewUser);
-        
+         
         return ResponseEntity.ok(response);
     }
 }

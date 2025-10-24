@@ -39,10 +39,10 @@ public class JwtTokenProvider {
         Date validity = new Date(now.getTime() + accessToken);
 
         return Jwts.builder()
-            .claims() 
-                .subject(String.valueOf(userNum)) 
-                .issuedAt(now)
-                .expiration(validity) 
+            .subject(String.valueOf(userNum))
+            .claims()  
+            .issuedAt(now)
+            .expiration(validity) 
             .and()
             .signWith(this.key)
             .compact();

@@ -22,36 +22,24 @@ public class UserDetailController {
      * @param auth
      * @return
      */
-    @GetMapping("/{userNum}")
+    @GetMapping
     public ResponseEntity<UserDetailResponse> getUserDetail(Authentication auth) {
         Long userNum = Long.parseLong(auth.getName());
+        UserDetailResponse res = userDetailService.getUserDetail(userNum);
 
-        return ResponseEntity.ok(userDetailService.getUserDetail(userNum));
+        return ResponseEntity.ok(res);
     }
 
     /**
-     * 유저 디테일 생성
+     * 유저 디테일 생성/수정
      * @param request
      * @param auth
      * @return
      */
     @PostMapping
     public ResponseEntity<UserDetailResponse> createUserDetail(@Validated @RequestBody UserDetailRequest request, Authentication auth){
-        String userId = String.valueOf(auth.getName());
-        
-        return ResponseEntity.ok(userDetailService.saveUserDetail(userId, request));
-    }
-    
-    /**
-     * 유저 디테일 수정
-     * @param request
-     * @param auth
-     * @return
-     */
-    @PatchMapping
-    public ResponseEntity<UserDetailResponse> uploadUserDetail(@Validated @RequestBody UserDetailRequest request, Authentication auth){
-        Long userNum = Long.parseLong(auth.getName());
+        UserDetailResponse res = userDetailService.saveUserDetail(request);
 
-        return ResponseEntity.ok(userDetailService.updateUserDetail(userNum, request));
+        return ResponseEntity.ok(res);
     }
 }

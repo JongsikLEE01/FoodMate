@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import com.project.dto.UserDetailDto.UserDetailRequest;
+
 @Entity
 @Table(name = "USER_DETAILS")
 @Getter
@@ -45,10 +47,13 @@ public class UserDetail {
         updDt = LocalDateTime.now();
     }
 
-    public void update(Integer userAge, String disease, String familyHistory, String allergy){
-        this.userAge = userAge;
-        this.disease = disease;
-        this.familyHistory = familyHistory;
-        this.allergy = allergy;
+    // 업데이트 메서드
+    public UserDetail update(UserDetailRequest request) {
+        this.userAge = request.userAge();
+        this.disease = request.disease();
+        this.familyHistory = request.familyHistory();
+        this.allergy = request.allergy();
+        return this;
     }
+
 }
