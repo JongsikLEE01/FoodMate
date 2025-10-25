@@ -38,8 +38,10 @@
     align-items: center;
     text-decoration: none;
     color: var(--color-deep-green);
-    font-weight: 600;
-    font-size: 1.25rem;
+}
+
+.logo img{
+    width: 10dvh;
 }
 
 .icon {

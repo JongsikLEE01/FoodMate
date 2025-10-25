@@ -1,0 +1,49 @@
+/* StepButtonSelector.module.css */
+.buttonContainer {
+    display: flex;
+    flex-wrap: wrap; /* 버튼이 넘어가면 다음 줄로 */
+    gap: var(--space-sm); /* 버튼 사이 간격 */
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-xl); 
+    
+    /* 중앙 정렬 (선택 사항) */
+    /* justify-content: center; */ 
+}
+
+.button {
+    /* 배경 및 텍스트 색상 */
+    background-color: var(--color-gray-100);
+    color: var(--color-text-secondary);
+    
+    /* 경계선 */
+    border: 1px solid var(--color-gray-300);
+    
+    /* 폰트 및 패딩 */
+    padding: var(--space-sm) var(--space-md);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    
+    /* 둥근 모서리 */
+    border-radius: var(--radius-full); 
+    
+    /* 애니메이션 */
+    transition: background-color var(--transition-fast) var(--ease-in-out), 
+                border-color var(--transition-fast) var(--ease-in-out),
+                color var(--transition-fast) var(--ease-in-out),
+                box-shadow var(--transition-fast) var(--ease-in-out);
+}
+
+.button:hover,
+.button:active {
+    /* 기본 버튼과 동일한 호버 효과 */
+    opacity: 0.85; 
+}
+
+/* 다크 모드 스타일 오버라이드 */
+@media (prefers-color-scheme: dark) {
+    .button {
+        background-color: var(--color-gray-800);
+        border-color: var(--color-gray-700);
+        color: var(--color-text);
+    }
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './css/Header.module.css';
+import banner from '../../../assets/images/FoodMate_Bannerr.png'
 
 const Header: React.FC = () => {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ const Header: React.FC = () => {
             
             <div className={styles.centerSection}>
                 <Link to="/" className={styles.logo}>
-                    FoodMate
+                    <img src={banner} alt='main_logo' className={styles.logo}/>
                 </Link>
             </div>
             

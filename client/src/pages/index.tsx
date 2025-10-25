@@ -1,61 +1,41 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import Layout from '../components/common/Layout/Layout';
 import ChatMessages from '../components/index/ChatMessages';
 import ChatInput from '../components/index/ChatInput';
+import { useChatLogic } from '../hooks/Chat';
 import styles from './css/index.module.css';
 
-interface Message {
-  id: number;
-  text: string;
-  isUser: boolean;
-  timestamp: string;
-}
-
 const HomePage: React.FC = () => {
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 1, text: '안녕하세요! 무엇을 도와드릴까요?', isUser: false, timestamp: '오후 2:30' },
-    { id: 2, text: '채팅 테스트입니다', isUser: true, timestamp: '오후 2:31' }
-  ]);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+    // 로직과 상태를 훅으로 가져오기.
+    const {
+        messages,
+        message,
+        messagesEndRef,
+        isLoading,
+        setMessage,
+        handleSubmit,
+    } = useChatLogic();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSubmit = () => {
-    if (!message.trim()) return;
-
-    const newMessage: Message = {
-      id: messages.length + 1,
-      text: message,
-      isUser: true,
-      timestamp: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
-    };
-
-    setMessages([...messages, newMessage]);
-    setMessage('');
-    
-    // TODO: AI 채팅 API 호출 구현
-  };
-
-  return (
-    <Layout>
-      <div className={styles.container}>
-        <ChatMessages messages={messages} messagesEndRef={messagesEndRef} />
-
-        <ChatInput 
-          message={message}
-          setMessage={setMessage}
-          onSubmit={handleSubmit}
-        />
-      </div>
-    </Layout>
-  );
+    return (
+        <Layout>
+            <div className={styles.container}>
+                <div className={styles.messagesContainer}>
+                    <ChatMessages messages={messages} messagesEndRef={messagesEndRef} />
+                    <div ref={messagesEndRef} /> 
+                    
+                    {/* 로딩 인디케이터를 사용한다면 여기서 렌더링 (현재는 로직이 없으므로 생략 가능) */}
+                    {/* {isLoading && <div className={styles.loadingIndicator}>...</div>} */}
+                </div>
+              
+                <ChatInput 
+                    message={message}
+                    setMessage={setMessage}
+                    onSubmit={handleSubmit}
+                    // isDisabled={isLoading} // 로딩 상태를 입력 비활성화에 사용
+                />
+            </div>
+        </Layout>
+    );
 };
 
 export default HomePage;
