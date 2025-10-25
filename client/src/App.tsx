@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "./pages/login"; 
+import LoginPage from "./pages/login/login"; 
 import HomePage from "./pages/index";
 import KakaoCallbackPage from "./pages/kakao/callback";
 import ProfileSetup from "./pages/user/profile/ProfileSetup";
-import UserInfoCheck from "./pages/user/info-check";
+import UserInfoCheck from "./pages/user/infoCheck";
 import { getAccessToken } from "./utils/tokenUtils";
 import './styles/global.css';
 

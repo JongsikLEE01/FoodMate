@@ -10,7 +10,7 @@
 
 .logoContainer {
     width: 200px;
-    margin-bottom: 40px;
+    margin-bottom: 50%;
 }
 
 .logo {
@@ -30,6 +30,7 @@
 .loginButton img {
     width: 100%;
     height: auto;
+    padding-top: 5%;
 }
 
 .loginButton .text{

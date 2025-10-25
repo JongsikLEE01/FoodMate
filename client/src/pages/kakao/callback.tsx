@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { kakaoLogin } from '../../api/auth';
 import { setTokens } from '../../utils/tokenUtils';
+import AppleLoading from '../../components/loading/AppleLoading';
 
 const KakaoCallbackPage: React.FC = () => {
     const check = useRef(false);
@@ -39,9 +40,7 @@ const KakaoCallbackPage: React.FC = () => {
     }, [location.search, navigate]);
 
     return (
-        <div style={{ padding: '20px' }}>
-            <p>카카오 로그인 처리 중입니다. 잠시만 기다려주세요...</p>
-        </div>
+        <AppleLoading message="카카오 로그인 처리 중입니다. 잠시만 기다려주세요..." />
     );
 };
 

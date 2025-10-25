@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Layout from '../../../components/common/Layout';
+import Layout from '../../../components/common/Layout/Layout';
 import { saveUserDetail, selectUser } from '../../../api/userDetail';
 import { ProfileSetupForm, STEPS, StepInfo } from './ts/steps';
 import StepInput from '../../../components/profile/StepInput';

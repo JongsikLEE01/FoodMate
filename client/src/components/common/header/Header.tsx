@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import styles from './Header.module.css';
+import styles from './css/Header.module.css';
 
 const Header: React.FC = () => {
     const navigate = useNavigate();

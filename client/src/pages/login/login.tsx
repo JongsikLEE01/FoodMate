@@ -1,8 +1,8 @@
 // 로그인 페이지
 import React from 'react';
-import KakaoLoginButton from '../components/auth/KakaoLoginBtn';
-import styles from './login.module.css';
-import logo from '../assets/images/FoodMate_Logo.png'
+import KakaoLoginButton from '../../components/auth/KakaoLoginBtn';
+import styles from './css/login.module.css';
+import logo from '../../assets/images/FoodMate_Logo.png'
 
 const Login: React.FC = () => {
     return (
