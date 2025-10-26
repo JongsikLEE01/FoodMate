@@ -1,4 +1,4 @@
-package com.project.dto.Error;
+package com.project.dto.ErrorDto;
 
 public class ErrorResponse {
     private String message;

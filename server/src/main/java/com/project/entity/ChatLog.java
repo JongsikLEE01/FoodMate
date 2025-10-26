@@ -1,34 +1,41 @@
 package com.project.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "CHAT_LOG")
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatLog {
-
     @Id
+    @Column(name = "CHAT_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chatId;
-
-    @Lob
-    private String message;
-
-    @Enumerated(EnumType.STRING)
-    private SenderType senderType; // USER or AI
-
-    private LocalDateTime sentDt;
-
+    private Long chatId;            // 채팅 아이디
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_NUM")
-    private User user;
+    @JoinColumn(name = "USER_NUM", nullable = false)
+    private User user;              // user테이블과 매핑
+    @Column(name = "MESSAGE")
+    private String message;         // 메세지
+    @Enumerated(EnumType.STRING)
+    @Column(name = "SENDER_TYPE")
+    private SenderType senderType;  // 전송타입 (user || ai)
+    @Column(name = "SENT_DT")
+    private LocalDateTime sentDt;   // 전송일
+
+    @PrePersist
+    protected void onCreate() {
+        sentDt = LocalDateTime.now();
+    }
 
     public enum SenderType {
-        USER, AI
+        USER, AI, JSON
     }
 }

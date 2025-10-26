@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "USERS")
@@ -28,12 +29,14 @@ public class User {
     @Builder.Default
     @Column(name = "COIN")
     private Integer coin = 0;       // 코인
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private UserDetail userDetail;  // 사용자 상세 정보
     @Column(name = "INS_DT")
     private LocalDateTime insDt;    // 가입일
     @Column(name = "UPD_DT")
     private LocalDateTime updDt;    // 수정일
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserDetail userDetail;  // 사용자 상세 정보
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ChatLog> chatLogs; // 채팅 로그
     
     // 카카오 회원가입/업데이트를 위한 빌더
     public static User createKakaoUser(String email, String nickname, String providerId) {
@@ -62,16 +65,17 @@ public class User {
         this.coin += amount;
     }
 
+    // date 자동 생성
     @PrePersist
     protected void onCreate() {
         insDt = LocalDateTime.now();
     }
-
     @PreUpdate
     protected void onUpdate() {
         updDt = LocalDateTime.now();
     }
 
+    // 유저 수정
     public void update(Long userNum, String userId, String providerId, String userName, Integer coin){
         this.userNum = userNum;
         this.userId = userId;

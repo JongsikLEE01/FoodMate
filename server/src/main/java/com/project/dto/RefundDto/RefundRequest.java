@@ -1,6 +1,6 @@
-package com.project.dto;
+package com.project.dto.RefundDto;
 
-public record RefundDto(
+public record RefundRequest(
     Long refundId,
     Long payId,
     String refundReason,

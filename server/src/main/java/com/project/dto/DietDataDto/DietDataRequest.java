@@ -1,6 +1,6 @@
-package com.project.dto;
+package com.project.dto.DietDataDto;
 
-public record DietDataDto(
+public record DietDataRequest(
     Long dataId,
     String diseaseName,
     String dataJson,

@@ -10,7 +10,6 @@ import com.project.entity.UserDetail;
 import com.project.repository.UserDetailRepository;
 import com.project.repository.UserRepository;
 
-import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,8 +20,7 @@ public class UserDetailService {
     private final UserRepository userRepository; 
 
     // 유저 상세 정보 조회
-    @Transactional
-    @PermitAll
+    @Transactional(readOnly = true)
     public UserDetailResponse getUserDetail(Long userNum) {
         return userDetailRepository.findByUserNum(userNum)
             .map(UserDetailResponse::fromEntity)

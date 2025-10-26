@@ -17,6 +17,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     // 유저 정보 찾기
+    @Transactional
     public UserResponse getUser(Long userNum){
         User user = userRepository.findByUserNum(userNum)
             .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
