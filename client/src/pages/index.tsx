@@ -6,7 +6,7 @@ import { useChatLogic } from '../hooks/Chat';
 import styles from './css/index.module.css';
 
 const HomePage: React.FC = () => {
-    // 로직과 상태를 훅으로 가져오기.
+    // 훅 가져오기
     const {
         messages,
         message,

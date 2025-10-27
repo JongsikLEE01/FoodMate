@@ -37,8 +37,8 @@ public class SecurityConfig {
         // CORS 설정을 먼저 적용
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
         
-        // CSRF 비활성화 (OAuth 콜백에서는 CSRF 토큰을 포함할 수 없음)
-        http.csrf(AbstractHttpConfigurer::disable);
+        // CSRF 비활성화
+        http.csrf(csrf -> csrf.disable());
         
         // 세션 관리 설정
         http.sessionManagement(session -> 
@@ -57,6 +57,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/auth/**").permitAll()
                 // 임시: 개발 중 루트 접속 확인을 위해 GET / 허용
                 .requestMatchers(HttpMethod.GET, "/").permitAll()
+                .requestMatchers("/chat/question").permitAll()
                 // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated()
             );

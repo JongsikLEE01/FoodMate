@@ -25,7 +25,7 @@ public class ChatLogService {
     // 채팅 목록 조회 (해당 유저의 모든 로그)
     // @Transactional(readOnly = true) = 조회 전용 트랜잭션
     @Transactional(readOnly = true)
-    public List<ChatLogResponse> getChatLogs(Long userNum) {
+    public List<ChatLogResponse> getChatHistory(Long userNum) {
         // 유저 번호로 모든 채팅 로그를 조회
         List<ChatLog> chatLogs = chatLogRepository.findByUser_UserNum(userNum);
         

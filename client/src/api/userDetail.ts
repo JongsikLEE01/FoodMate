@@ -7,8 +7,6 @@ export const selectUser = async () => {
   const token = getAccessToken();
   if (!token) throw new Error("JWT 토큰이 없습니다.");
 
-  console.log(token)
-
   const res = await axios.get("http://localhost:8080/user/profile", {
     headers: {
       Authorization: `Bearer ${token}`,

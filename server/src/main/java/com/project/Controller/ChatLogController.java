@@ -26,10 +26,10 @@ public class ChatLogController {
      * @param auth
      * @return
      */
-    @GetMapping("/logs")
+    @GetMapping("/history")
     public ResponseEntity<List<ChatLogResponse>> getChatLogs(Authentication auth) {
         Long userNum = Long.parseLong(auth.getName()); 
-        List<ChatLogResponse> res = chatLogService.getChatLogs(userNum); 
+        List<ChatLogResponse> res = chatLogService.getChatHistory(userNum); 
         
         return ResponseEntity.ok(res);
     }
