@@ -10,6 +10,7 @@ import com.project.dto.ChatLogDto.ChatLogRequest;
 import com.project.dto.ChatLogDto.ChatLogResponse;
 import com.project.entity.ChatLog;
 import com.project.entity.User;
+import com.project.entity.ChatLog.SenderType;
 import com.project.repository.ChatLogRepository;
 import com.project.repository.UserRepository;
 
@@ -26,7 +27,7 @@ public class ChatLogService {
     @Transactional(readOnly = true)
     public List<ChatLogResponse> getChatLogs(Long userNum) {
         // 유저 번호로 모든 채팅 로그를 조회
-        List<ChatLog> chatLogs = chatLogRepository.findByUserNum(userNum);
+        List<ChatLog> chatLogs = chatLogRepository.findByUser_UserNum(userNum);
         
         // List를 DTO List로 변환
         return chatLogs.stream()
@@ -36,7 +37,7 @@ public class ChatLogService {
 
     // 채팅 저장
     @Transactional
-    public ChatLogResponse saveChatLog(ChatLogRequest request){
+    public ChatLogResponse saveUserChat(ChatLogRequest request){
         // user 존재 여부 확인
         Long userNum = request.userNum();
         User user = userRepository.findById(userNum)
@@ -46,7 +47,7 @@ public class ChatLogService {
         ChatLog newChatLog = ChatLog.builder()
             .user(user)
             .message(request.message())
-            .senderType(request.senderType())
+            .senderType(SenderType.USER)
             .build();
         
         ChatLog savedChatLog = chatLogRepository.save(newChatLog);

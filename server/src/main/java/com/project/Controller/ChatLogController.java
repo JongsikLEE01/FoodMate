@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 
 import com.project.dto.ChatLogDto.ChatLogRequest;
@@ -36,21 +35,21 @@ public class ChatLogController {
     }
     
     /**
-     * 채팅 저장
+     * 유저 채팅 저장
      * @param request
      * @param auth
      * @return
      */
-    @PostMapping
-    public ResponseEntity<ChatLogResponse> saveChatLog(@RequestBody ChatLogRequest request, Authentication auth) {
+    @PostMapping("/question")
+    public ResponseEntity<ChatLogResponse> saveUserChat(@RequestBody ChatLogRequest request, Authentication auth) {
         Long userNum = Long.parseLong(auth.getName());
         
         // Request의 userNum과 인증된 userNum이 다를 경우 예외 처리
         if (!userNum.equals(request.userNum())) {
-            throw new AccessDeniedException("해당 권한이 없습니다.");
+            return ResponseEntity.status(403).build();
         }
 
-        ChatLogResponse res = chatLogService.saveChatLog(request);
+        ChatLogResponse res = chatLogService.saveUserChat(request);
         
         return ResponseEntity.ok(res);
     }
