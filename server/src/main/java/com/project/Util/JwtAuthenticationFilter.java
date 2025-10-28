@@ -51,6 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     String jwt = resolveToken(request);
     if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
         Long userNum = jwtTokenProvider.getUserNum(jwt);
+        System.out.println("DEBUG : 토큰 검증 시작");
         if (userNum != null) {
             UserDetails userDetails = new org.springframework.security.core.userdetails.User(
                 String.valueOf(userNum), "", Collections.emptyList());

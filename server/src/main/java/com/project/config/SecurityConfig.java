@@ -11,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -36,14 +35,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // CORS 설정을 먼저 적용
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        
         // CSRF 비활성화
         http.csrf(csrf -> csrf.disable());
-        
         // 세션 관리 설정
-        http.sessionManagement(session -> 
-            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        );
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        // 권한 설정 전 필터 설정
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         
         // 요청 권한 설정
         http.authorizeHttpRequests(auth -> auth
@@ -57,12 +54,14 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/auth/**").permitAll()
                 // 임시: 개발 중 루트 접속 확인을 위해 GET / 허용
                 .requestMatchers(HttpMethod.GET, "/").permitAll()
+
+                // /user/coin 경로 허용
+                .requestMatchers("/user/coin").authenticated()
+                // /caht/question 경로 허용
                 .requestMatchers("/chat/question").permitAll()
                 // 그 외 모든 요청은 인증 필요
                 .anyRequest().authenticated()
             );
-
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

@@ -1,6 +1,7 @@
 package com.project.Controller;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,16 +42,23 @@ public class ChatLogController {
      * @return
      */
     @PostMapping("/question")
-    public ResponseEntity<ChatLogResponse> saveUserChat(@RequestBody ChatLogRequest request, Authentication auth) {
-        Long userNum = Long.parseLong(auth.getName());
+    public ResponseEntity<?> saveUserChat(@RequestBody ChatLogRequest request, Authentication auth) {
+        try {
+            Long userNum = Long.parseLong(auth.getName());
         
-        // Request의 userNum과 인증된 userNum이 다를 경우 예외 처리
-        if (!userNum.equals(request.userNum())) {
-            return ResponseEntity.status(403).build();
-        }
+            // Request의 userNum과 인증된 userNum이 다를 경우 예외 처리
+            if (!userNum.equals(request.userNum())) {
+                return ResponseEntity.status(403).build();
+            }
 
-        ChatLogResponse res = chatLogService.saveUserChat(request);
-        
-        return ResponseEntity.ok(res);
+            ChatLogResponse res = chatLogService.saveUserChat(request);
+            
+            return ResponseEntity.ok(res);
+        } catch (IllegalStateException e) {
+            if(e.getMessage().contains("코인이 부족합니다.")){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            }
+            throw e;
+        }
     }
 }

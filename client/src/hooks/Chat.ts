@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { sendUserMessage, userChatResponse, userChatRequest, getChatHistory } from '../api/chat'; 
-import { getUserNumFromToken } from '../api/auth'; // JWT userNum 추출 함수
+import { getUserNumFromToken } from '../api/auth';
+import { useCoin } from './Coin';
+import axios from 'axios';
 
-// 1. 타
 export interface Message extends Omit<userChatResponse, 'userNum'> {} 
 
-// 테스트용 더미 메시지
+// 첫 화면 메시지
 const initMessages: Message[] = [
     { chatId: 1, message: '안녕하세요! 저는 맞춤형 식단 추천 AI 푸드메이트입니다. 무엇을 도와드릴까요?', senderType: 'AI', sendDt: new Date().toISOString() },
 ];
@@ -17,6 +18,7 @@ export const useChatLogic = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [userNum, setUserNum] = useState<number | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const { coin, setCoin } = useCoin();
 
     // 스크롤 함수
     const scrollToBottom = useCallback(() => {
@@ -77,6 +79,11 @@ export const useChatLogic = () => {
             return;
         }
 
+        if (coin != null && coin <= 0) {
+            alert("코인이 부족합니다. 충전페이지로 이동할까요?");
+            return;
+        }
+
         const userMessageText = message.trim();
         setMessage('');
         setIsLoading(true);
@@ -96,13 +103,16 @@ export const useChatLogic = () => {
                 userNum: userNum,
                 message: userMessageText,
             };
-            
 
-            // sendUserMessage 호출
             const responseLogs: userChatResponse[] = await sendUserMessage(requestData); 
-
             // 4. 서버 응답으로 로컬 메시지 업데이트
             const logsToProcess = Array.isArray(responseLogs) ? responseLogs : (responseLogs ? [responseLogs] : []); // null 또는 undefined인 경우 빈 배열
+            
+            // 5. 채팅 성공 시 코인 잔액 감소
+            setCoin(prev => {
+                if(prev === null || prev === 0 ) return 0;
+                return prev - 1;
+            })
 
             setMessages(prev => {
                 const updatedMessages = prev.filter(msg => msg.chatId !== optimisticMessage.chatId);
@@ -116,19 +126,34 @@ export const useChatLogic = () => {
                 }));
 
                 return [...updatedMessages, ...finalLogs];
-        });
+            });
             
             // 💡 TODO: 이어서 AI 응답을 요청하는 로직을 추가해야 합니다.
 
-        } catch (error) {
-            console.error("질문 전송 오류:", error);
+        } catch (e) {
+            console.error("질문 전송 오류:", e);
+            let errorMsg = "메시지를 저장하지 못했습니다. 다시 시도해 주세요.";
+
+            // Axios 에러이면서 response 객체가 존재할 때
+            if (axios.isAxiosError(e) && e.response) {
+                const responseData = e.response.data;
+                
+                // 백엔드 호출에 따른 답변
+                if (typeof responseData === 'string' && responseData.includes("코인이 부족합니다.")) {
+                    errorMsg = responseData;
+                } else if (responseData && responseData.message) {
+                    errorMsg = responseData.message;
+                }
+            }
+
             setMessage(userMessageText);
             setMessages(prev => prev.filter(msg => msg.chatId !== optimisticMessage.chatId));
-            alert("메시지를 저장하지 못했습니다. 다시 시도해 주세요.");
+            
+            alert(errorMsg);
         } finally {
             setIsLoading(false);
         }
-    }, [message, isLoading, userNum]); 
+    }, [message, isLoading, userNum, coin, setCoin]); 
 
     return {
         messages,

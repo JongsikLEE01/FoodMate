@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
-    
     private final UserService userService;
 
     /**
@@ -26,9 +25,32 @@ public class UserController {
      */
     @GetMapping
     public ResponseEntity<UserResponse> getUser(Authentication auth) {
+        if (auth == null) return ResponseEntity.status(401).build();
         Long userNum = Long.parseLong(auth.getName());
-        
-        return ResponseEntity.ok(userService.getUser(userNum));
+
+        try {
+            UserResponse res = userService.getUser(userNum);
+            return ResponseEntity.ok(res);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).build();
+        }
     }
-    
+
+    /**
+     * 유저 보유 코인 찾기
+     * @param auth
+     * @return
+     */
+    @GetMapping("/coin")
+    public ResponseEntity<Integer> getUserCoin(Authentication auth){
+        if (auth == null) return ResponseEntity.status(401).build();
+        Long userNum = Long.parseLong(auth.getName());
+
+        try {
+            Integer coin = userService.getUserCoin(userNum);
+            return ResponseEntity.ok(coin);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).build();
+        }
+    }
 }

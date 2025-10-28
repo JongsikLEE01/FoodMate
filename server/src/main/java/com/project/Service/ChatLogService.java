@@ -43,6 +43,10 @@ public class ChatLogService {
         User user = userRepository.findById(userNum)
                                 .orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다. UserNum: " + userNum));
         
+        // 코인 차감
+        final int COIN_COST = 1;
+        user.decreaseCoin(COIN_COST);
+
         // ChatLog 엔티티 생성
         ChatLog newChatLog = ChatLog.builder()
             .user(user)

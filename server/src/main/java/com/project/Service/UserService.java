@@ -50,4 +50,11 @@ public class UserService {
 
         return UserResponse.fromEntity(user);
     }
+
+    // 유저 보유 코인 찾기
+    public int getUserCoin(Long userNum){
+        return userRepository.findByUserNum(userNum)
+            .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."))
+            .getCoin();
+    }
 }
