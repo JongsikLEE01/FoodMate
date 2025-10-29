@@ -40,6 +40,7 @@ public class UserDetail {
     @PrePersist
     protected void onCreate() {
         insDt = LocalDateTime.now();
+        updDt = LocalDateTime.now();
     }
 
     @PreUpdate

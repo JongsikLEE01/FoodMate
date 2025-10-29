@@ -69,6 +69,7 @@ public class User {
     @PrePersist
     protected void onCreate() {
         insDt = LocalDateTime.now();
+        updDt = LocalDateTime.now();
     }
     @PreUpdate
     protected void onUpdate() {

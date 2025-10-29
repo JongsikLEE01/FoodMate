@@ -59,7 +59,7 @@ public class ChatLogController {
             // 채팅 답변 생성
             String resMsg = chatService.getChatResponse(userNum, msg);
             SenderType type = ChatUtil.checkSenderType(msg);
-            chatLogService.saveChatbotResponse(userNum, resMsg, type);
+            // chatLogService.saveChatbotResponse(userNum, resMsg, type);
 
             return ResponseEntity.ok(resMsg);
         } catch(IllegalAccessException e){

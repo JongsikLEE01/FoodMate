@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class ChatLogService {
     private final UserRepository userRepository;
     private final ChatLogRepository chatLogRepository;
+    private final ChatService chatService;
 
 
     // 채팅 목록 조회 (해당 유저의 모든 로그)
@@ -38,36 +39,47 @@ public class ChatLogService {
     // 유저 채팅 저장
     @Transactional
     public ChatLogResponse saveUserChat(ChatLogRequest request){
-        // user 존재 여부 확인
         Long userNum = request.userNum();
-        User user = userRepository.findById(userNum).orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다. UserNum: " + userNum));
         
-        // 코인 차감
+        // 1. 유저 존재 여부 확인
+        User user = userRepository.findById(userNum)
+            .orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다. UserNum: " + userNum));
+        
+        // 2. 코인 차감
         final int COIN_COST = 1;
+        if (user.getCoin() < COIN_COST) {
+             throw new RuntimeException("코인이 부족합니다."); 
+        }
         user.decreaseCoin(COIN_COST);
 
-        // ChatLog 엔티티 생성
-        ChatLog newChatLog = ChatLog.builder()
+        // 3. USER ChatLog 엔티티 생성 및 DB 저장
+        ChatLog userChatLog = ChatLog.builder()
             .user(user)
             .message(request.message())
             .senderType(SenderType.USER)
             .build();
+        chatLogRepository.save(userChatLog);
         
-        ChatLog savedChatLog = chatLogRepository.save(newChatLog);
-        return ChatLogResponse.fromEntity(savedChatLog);
-    }
+        // 4. AI 응답 요청 (ChatService 이용)
+        try {
+            String aiResponseMessage = chatService.getChatResponse(userNum, request.message()); 
 
-    // 챗봇 응답 저장
-    @Transactional
-    public void saveChatbotResponse(Long userNum, String msg, SenderType senderType){
-        User user = userRepository.findById(userNum).orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다. UserNum: " + userNum));
-        
-        ChatLog newChatLog = ChatLog.builder()
-            .user(user)
-            .message(msg)
-            .senderType(senderType)
-            .build();
+            // 5. AI ChatLog 엔티티 생성 및 DB 저장
+            ChatLog aiChatLog = ChatLog.builder()
+                .user(user)
+                .message(aiResponseMessage)
+                .senderType(SenderType.AI) 
+                .build();
+            ChatLog savedAiChatLog = chatLogRepository.save(aiChatLog);
 
-        chatLogRepository.save(newChatLog);
+            // 6. 최종적으로 AI 응답을 DTO로 반환
+            return ChatLogResponse.fromEntity(savedAiChatLog);
+        } catch (Exception e) {
+            System.out.println("----------------AI 로직 오류 발생------------------");
+            e.printStackTrace(); // 👈 상세 오류 확인용
+            
+            // 🚨 트랜잭션 롤백 트리거 및 클라이언트에게 오류 메시지 전달
+            throw new RuntimeException("AI 서버 통신 또는 DB 처리 중 오류 발생", e); 
+        }
     }
 }

@@ -18,7 +18,7 @@ public class DietData {
     private Long dataId;
     @Column(name = "DISEASE_NAME", unique = true, nullable = false)
     private String diseaseName;
-    @Column(name = "DATA_JSON", columnDefinition = "JSON", nullable = false)
+    // @Column(name = "DATA_JSON", columnDefinition = "JSON", nullable = false)
     private String dataJson;
     @Column(name= "INS_DT")
     private LocalDateTime insDt;
