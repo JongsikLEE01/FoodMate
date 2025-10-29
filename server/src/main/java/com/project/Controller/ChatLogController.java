@@ -12,7 +12,10 @@ import org.springframework.security.core.Authentication;
 
 import com.project.dto.ChatLogDto.ChatLogRequest;
 import com.project.dto.ChatLogDto.ChatLogResponse;
+import com.project.entity.ChatLog.SenderType;
 import com.project.service.ChatLogService;
+import com.project.service.ChatService;
+import com.project.util.ChatUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChatLogController {
     private final ChatLogService chatLogService;
+    private final ChatService chatService;
 
     /**
      * 채팅 로그 조회
@@ -29,36 +33,39 @@ public class ChatLogController {
      */
     @GetMapping("/history")
     public ResponseEntity<List<ChatLogResponse>> getChatLogs(Authentication auth) {
+        if (auth == null) return ResponseEntity.status(401).build();
         Long userNum = Long.parseLong(auth.getName()); 
+
         List<ChatLogResponse> res = chatLogService.getChatHistory(userNum); 
-        
         return ResponseEntity.ok(res);
     }
     
     /**
-     * 유저 채팅 저장
+     * 유저채팅/챗봇 답변 저장
      * @param request
      * @param auth
      * @return
      */
     @PostMapping("/question")
-    public ResponseEntity<?> saveUserChat(@RequestBody ChatLogRequest request, Authentication auth) {
-        try {
-            Long userNum = Long.parseLong(auth.getName());
-        
-            // Request의 userNum과 인증된 userNum이 다를 경우 예외 처리
-            if (!userNum.equals(request.userNum())) {
-                return ResponseEntity.status(403).build();
-            }
+    public ResponseEntity<?> saveUserChat(@RequestBody ChatLogRequest req, Authentication auth) {
+        if (auth == null) return ResponseEntity.status(401).build();
+        Long userNum = Long.parseLong(auth.getName());
+        String msg = req.message();
 
-            ChatLogResponse res = chatLogService.saveUserChat(request);
+        try {
+            // 유저 채팅 저장
+            chatLogService.saveUserChat(req);
             
-            return ResponseEntity.ok(res);
-        } catch (IllegalStateException e) {
-            if(e.getMessage().contains("코인이 부족합니다.")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-            }
-            throw e;
+            // 채팅 답변 생성
+            String resMsg = chatService.getChatResponse(userNum, msg);
+            SenderType type = ChatUtil.checkSenderType(msg);
+            chatLogService.saveChatbotResponse(userNum, resMsg, type);
+
+            return ResponseEntity.ok(resMsg);
+        } catch(IllegalAccessException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("시스템 처리 중 오류 발생...");
         }
     }
 }

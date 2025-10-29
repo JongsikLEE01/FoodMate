@@ -22,8 +22,8 @@ public class ChatLogService {
     private final UserRepository userRepository;
     private final ChatLogRepository chatLogRepository;
 
+
     // 채팅 목록 조회 (해당 유저의 모든 로그)
-    // @Transactional(readOnly = true) = 조회 전용 트랜잭션
     @Transactional(readOnly = true)
     public List<ChatLogResponse> getChatHistory(Long userNum) {
         // 유저 번호로 모든 채팅 로그를 조회
@@ -35,13 +35,12 @@ public class ChatLogService {
                     .collect(Collectors.toList());
     }
 
-    // 채팅 저장
+    // 유저 채팅 저장
     @Transactional
     public ChatLogResponse saveUserChat(ChatLogRequest request){
         // user 존재 여부 확인
         Long userNum = request.userNum();
-        User user = userRepository.findById(userNum)
-                                .orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다. UserNum: " + userNum));
+        User user = userRepository.findById(userNum).orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다. UserNum: " + userNum));
         
         // 코인 차감
         final int COIN_COST = 1;
@@ -56,5 +55,19 @@ public class ChatLogService {
         
         ChatLog savedChatLog = chatLogRepository.save(newChatLog);
         return ChatLogResponse.fromEntity(savedChatLog);
+    }
+
+    // 챗봇 응답 저장
+    @Transactional
+    public void saveChatbotResponse(Long userNum, String msg, SenderType senderType){
+        User user = userRepository.findById(userNum).orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다. UserNum: " + userNum));
+        
+        ChatLog newChatLog = ChatLog.builder()
+            .user(user)
+            .message(msg)
+            .senderType(senderType)
+            .build();
+
+        chatLogRepository.save(newChatLog);
     }
 }

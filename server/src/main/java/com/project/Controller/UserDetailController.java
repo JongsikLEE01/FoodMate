@@ -6,7 +6,6 @@ import com.project.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +24,7 @@ public class UserDetailController {
      */
     @GetMapping
     public ResponseEntity<UserDetailResponse> getUserDetail(Authentication auth) {
+        if (auth == null) return ResponseEntity.status(401).build();
         Long userNum = Long.parseLong(auth.getName());
         UserDetailResponse res = userDetailService.getUserDetail(userNum);
 
@@ -39,12 +39,7 @@ public class UserDetailController {
      */
     @PostMapping
     public ResponseEntity<UserDetailResponse> createUserDetail(@Validated @RequestBody UserDetailRequest request, Authentication auth){
-        Long userNum = Long.parseLong(auth.getName());
-
-        // Request의 userNum과 인증된 userNum이 다를 경우 예외 처리
-        if (!userNum.equals(request.userNum())) {
-            throw new AccessDeniedException("해당 권한이 없습니다.");
-        }
+        if (auth == null) return ResponseEntity.status(401).build();
 
         UserDetailResponse res = userDetailService.saveUserDetail(request);
 
