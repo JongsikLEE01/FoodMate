@@ -33,8 +33,8 @@ public class ChatService {
         // json 데이터로 답변 찾기
         DietRule matchRule = findJsonAnswer(userContext, keyword, jsonString);
 
-        system.out.println("JSON 데이터---------");
-        system.out.println(matchRule);
+        System.out.println("JSON 데이터---------");
+        System.out.println(matchRule);
 
         if(matchRule != null){
             return jsonAnswer(matchRule, userContext);
