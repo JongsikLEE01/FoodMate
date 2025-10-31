@@ -21,8 +21,6 @@ import lombok.RequiredArgsConstructor;
 public class ChatLogService {
     private final UserRepository userRepository;
     private final ChatLogRepository chatLogRepository;
-    private final ChatService chatService;
-
 
     // 채팅 목록 조회 (해당 유저의 모든 로그)
     @Transactional(readOnly = true)
@@ -38,7 +36,7 @@ public class ChatLogService {
 
     // 유저 채팅 저장
     @Transactional
-    public ChatLogResponse saveUserChat(ChatLogRequest request){
+    public ChatLogResponse saveUserChat(ChatLogRequest request){ 
         Long userNum = request.userNum();
         
         // 1. 유저 존재 여부 확인
@@ -58,28 +56,23 @@ public class ChatLogService {
             .message(request.message())
             .senderType(SenderType.USER)
             .build();
-        chatLogRepository.save(userChatLog);
-        
-        // 4. AI 응답 요청 (ChatService 이용)
-        try {
-            String aiResponseMessage = chatService.getChatResponse(userNum, request.message()); 
 
-            // 5. AI ChatLog 엔티티 생성 및 DB 저장
-            ChatLog aiChatLog = ChatLog.builder()
-                .user(user)
-                .message(aiResponseMessage)
-                .senderType(SenderType.AI) 
-                .build();
-            ChatLog savedAiChatLog = chatLogRepository.save(aiChatLog);
+        ChatLog savedChatLog = chatLogRepository.save(userChatLog);
 
-            // 6. 최종적으로 AI 응답을 DTO로 반환
-            return ChatLogResponse.fromEntity(savedAiChatLog);
-        } catch (Exception e) {
-            System.out.println("----------------AI 로직 오류 발생------------------");
-            e.printStackTrace(); // 👈 상세 오류 확인용
-            
-            // 🚨 트랜잭션 롤백 트리거 및 클라이언트에게 오류 메시지 전달
-            throw new RuntimeException("AI 서버 통신 또는 DB 처리 중 오류 발생", e); 
-        }
+        return ChatLogResponse.fromEntity(savedChatLog);
+    }
+
+    // 챗봇 답변 저장
+    @Transactional
+    public ChatLog saveChatbotResponse(Long userNum, String message, SenderType senderType){
+        User user = userRepository.findById(userNum)
+            .orElseThrow(() -> new RuntimeException("유저를 찾지 못했습니다. UserNum: " + userNum));
+
+        ChatLog aiChatLog = ChatLog.builder()
+            .user(user)
+            .message(message)
+            .senderType(senderType)
+            .build();
+        return chatLogRepository.save(aiChatLog);
     }
 }

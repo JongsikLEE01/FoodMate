@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.dto.ChatLogDto.ChatResponse;
+import com.project.entity.ChatLog.SenderType;
 import com.project.entity.ChatUserContext;
 import com.project.entity.DietRule;
 import com.project.repository.DietDataRepository;
@@ -23,8 +25,8 @@ public class ChatService {
     private final ObjectMapper objMapper;
 
     // Chat 답변 생성
-    public String getChatResponse(Long UserNum, String msg) throws Exception {
-        ChatUserContext userContext = userService.getChatUserContext(UserNum, msg);
+    public ChatResponse getChatResponse(Long userNum, String msg) throws Exception {
+        ChatUserContext userContext = userService.getChatUserContext(userNum, msg); // UserNum -> userNum
 
         // 텍스트 추출
         List<String> keyword = ChatUtil.splitString(msg.toLowerCase().replace(" ", ","));
@@ -33,13 +35,20 @@ public class ChatService {
         // json 데이터로 답변 찾기
         DietRule matchRule = findJsonAnswer(userContext, keyword, jsonString);
 
-        System.out.println("JSON 데이터---------");
-        System.out.println(matchRule);
-
         if(matchRule != null){
+            // 1. JSON 기반 답변
             return jsonAnswer(matchRule, userContext);
         } else {
-            return aiService.callAi(userContext, msg);
+            // AI 답변
+            String resMsg = aiService.callAi(userContext, msg);
+            
+            return new ChatResponse(
+                ChatUtil.newChatId(),
+                SenderType.AI,
+                resMsg,
+                ChatUtil.formatDateTime(),
+                null
+            );
         }
     }
 
@@ -52,17 +61,15 @@ public class ChatService {
         }
 
         for (DietRule rule : allRules) {
-            // 키워드 매칭 체크
             boolean keywordChk = rule.triggerKw().stream().anyMatch(kw -> keyword.contains(kw.toLowerCase()));
             if (!keywordChk) continue;
 
-            // 알러지/나이/질병 필터
             boolean allergyChk = rule.allergyEx().stream().anyMatch(allergy -> userContext.allergies().contains(allergy));
             if (allergyChk) continue;
             if (!rule.targetAge().equalsIgnoreCase("ALL") && !ageMatch(userContext.age(), rule.targetAge())) continue; 
             if (!rule.fhFilter().isEmpty()) {
-                boolean isFhMatch = rule.fhFilter().stream().allMatch(fh -> userContext.familyHistory().contains(fh));
-                if (!isFhMatch) continue;
+                boolean fhMatch = rule.fhFilter().stream().allMatch(fh -> userContext.familyHistory().contains(fh));
+                if (!fhMatch) continue;
             }
             return rule;
         }
@@ -70,19 +77,24 @@ public class ChatService {
     }
 
     // JSON 답변 템플릿
-    private String jsonAnswer(DietRule rule, ChatUserContext userContext){
-        String answer = rule.answer();
+    private ChatResponse jsonAnswer(DietRule rule, ChatUserContext userContext){
+        String answerText = rule.answer();
         
-        answer = answer.replace("${user_age}", String.valueOf(userContext.age()));
-        answer = answer.replace("${REC_FOOD}", rule.recFood());
+        // 템플릿 변수 치환 로직 (기존과 동일)
+        answerText = answerText.replace("${user_age}", String.valueOf(userContext.age()));
+        answerText = answerText.replace("${REC_FOOD}", rule.recFood());
+        String userFhString = userContext.familyHistory().stream().collect(Collectors.joining(", "));
+        answerText = answerText.replace("${가족_필터}", userFhString.isEmpty() ? "특별한 가족력" : userFhString);
+        answerText = answerText.replace("${family_history_note}", userFhString.isEmpty() ? "" : String.format(" 고객님의 가족력(%s)을 고려하여...", userFhString));
 
-        String userFhString = userContext.familyHistory().stream()
-                                     .collect(Collectors.joining(", "));
-        
-        answer = answer.replace("${가족_필터}", userFhString.isEmpty() ? "특별한 가족력" : userFhString);
-        answer = answer.replace("${family_history_note}", userFhString.isEmpty() ? "" : String.format(" 고객님의 가족력(%s)을 고려하여...", userFhString));
-
-        return answer;
+        // ChatResponse 객체로 반환
+        return new ChatResponse(
+            ChatUtil.newChatId(), 
+            SenderType.JSON, 
+            answerText,
+            ChatUtil.formatDateTime(), 
+            null 
+        );
     }
 
     // 나이 매칭

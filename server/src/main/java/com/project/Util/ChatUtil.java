@@ -1,14 +1,28 @@
 package com.project.util;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.project.entity.ChatLog.SenderType;
 
 public class ChatUtil {
     private ChatUtil() { }
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy,MM,dd,HH,mm,ss");
+    
+    // 현재 시각 포맷으로 변환
+    public static String formatDateTime() {
+        return LocalDateTime.now().format(DATE_TIME_FORMATTER);
+    }
+    
+    // 임시 ChatID 생성
+    public static String newChatId() {
+        return UUID.randomUUID().toString();
+    }
 
     // SenderType 결정
     public static SenderType checkSenderType(String responseMessage) {

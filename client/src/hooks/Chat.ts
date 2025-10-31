@@ -11,7 +11,7 @@ const initMessages: Message[] = [
     { chatId: 1, message: '안녕하세요! 저는 맞춤형 식단 추천 AI 푸드메이트입니다. 무엇을 도와드릴까요?', senderType: 'AI', sendDt: new Date().toISOString() },
 ];
 
-// 2. 챗 로직 훅
+// 채팅 로직
 export const useChatLogic = () => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<Message[]>([]);
@@ -27,7 +27,7 @@ export const useChatLogic = () => {
 
     // 초기 로드 및 스크롤 처리
     useEffect(() => {
-        // 1. 사용자 번호 로드 및 인증 확인
+        // 1사용자 번호 로드 및 인증 확인
         const num = getUserNumFromToken();
         if (num !== null) {
             setUserNum(num);
@@ -37,7 +37,7 @@ export const useChatLogic = () => {
             return;
         }
 
-        // 2. 유저 메시지 가져오기 함수
+        // 유저 메시지 가져오기
         const getHistory = async (userNum: number) => {
             try {
                 const history = await getChatHistory(userNum);
@@ -59,21 +59,21 @@ export const useChatLogic = () => {
             }
         };
 
-        // 3. userNum이 유효할 때만 기록 조회 실행
+        // userNum이 유효할 때만 기록 조회 실행
         if (num !== null) {
-             getHistory(num);
+            getHistory(num);
         }
         
     }, []);
 
-    // 2. 메시지 업데이트될 때마다 스크롤
+    // 메시지 업데이트될 때마다 스크롤 (변경 없음)
     useEffect(() => {
         scrollToBottom();
     }, [messages, scrollToBottom]);
 
     // 메시지 전송
     const handleSubmit = useCallback(async () => {
-        // 1. 유효성 검사
+        // 유효성 검사
         if (!message.trim() || isLoading || userNum === null) {
             if (userNum === null) alert("사용자 정보가 없어 메시지를 보낼 수 없습니다.");
             return;
@@ -88,7 +88,7 @@ export const useChatLogic = () => {
         setMessage('');
         setIsLoading(true);
 
-        // 2. 사용자 메시지를 로컬에 즉시 반영
+        // 사용자 메시지를 즉시 반영
         const optimisticMessage: Message = {
             chatId: Date.now(), 
             message: userMessageText,
@@ -97,57 +97,49 @@ export const useChatLogic = () => {
         };
         setMessages(prev => [...prev, optimisticMessage]);
 
-        // 3. 사용자 질문 DB 저장
+        // 사용자 질문 DB 저장
         try {
             const requestData: userChatRequest = {
                 userNum: userNum,
                 message: userMessageText,
             };
 
-            const responseLogs: userChatResponse[] = await sendUserMessage(requestData); 
-            // 4. 서버 응답으로 로컬 메시지 업데이트
-            const logsToProcess = Array.isArray(responseLogs) ? responseLogs : (responseLogs ? [responseLogs] : []); // null 또는 undefined인 경우 빈 배열
+            const responseLog: userChatResponse = await sendUserMessage(requestData); 
+            const finalLog: Message = { 
+                chatId: responseLog.chatId,
+                message: responseLog.message,
+                senderType: responseLog.senderType,
+                sendDt: responseLog.sendDt,
+            };
             
-            // 5. 채팅 성공 시 코인 잔액 감소
+            // 채팅 성공 시 코인 잔액 감소
             setCoin(prev => {
                 if(prev === null || prev === 0 ) return 0;
                 return prev - 1;
             })
 
             setMessages(prev => {
-                const updatedMessages = prev.filter(msg => msg.chatId !== optimisticMessage.chatId);
-                
-                // Message 타입으로 변환 및 추가
-                const finalLogs: Message[] = logsToProcess.map(log => ({ 
-                    chatId: log.chatId,
-                    message: log.message,
-                    senderType: log.senderType,
-                    sendDt: log.sendDt,
-                }));
-
-                return [...updatedMessages, ...finalLogs];
+                return [...prev, finalLog];
             });
             
-            // 💡 TODO: 이어서 AI 응답을 요청하는 로직을 추가해야 합니다.
+            // 💡 TODO: 이어서 AI 응답을 요청하는 로직을 추가해야 합니다. (이 주석은 유지)
 
         } catch (e) {
             console.error("질문 전송 오류:", e);
             let errorMsg = "메시지를 저장하지 못했습니다. 다시 시도해 주세요.";
-
-            // Axios 에러이면서 response 객체가 존재할 때
             if (axios.isAxiosError(e) && e.response) {
                 const responseData = e.response.data;
                 
-                // 백엔드 호출에 따른 답변
+                // 백엔드 호출에 따른 에러 처리
                 if (typeof responseData === 'string' && responseData.includes("코인이 부족합니다.")) {
                     errorMsg = responseData;
                 } else if (responseData && responseData.message) {
-                    errorMsg = responseData.message;
+                    errorMsg = responseData.message; 
                 }
             }
 
             setMessage(userMessageText);
-            setMessages(prev => prev.filter(msg => msg.chatId !== optimisticMessage.chatId));
+            setMessages(prev => prev.filter(msg => msg.chatId !== optimisticMessage.chatId)); 
             
             alert(errorMsg);
         } finally {

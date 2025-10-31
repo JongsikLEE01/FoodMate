@@ -12,10 +12,9 @@ import org.springframework.security.core.Authentication;
 
 import com.project.dto.ChatLogDto.ChatLogRequest;
 import com.project.dto.ChatLogDto.ChatLogResponse;
-import com.project.entity.ChatLog.SenderType;
+import com.project.dto.ChatLogDto.ChatResponse;
 import com.project.service.ChatLogService;
 import com.project.service.ChatService;
-import com.project.util.ChatUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,18 +49,18 @@ public class ChatLogController {
     public ResponseEntity<?> saveUserChat(@RequestBody ChatLogRequest req, Authentication auth) {
         if (auth == null) return ResponseEntity.status(401).build();
         Long userNum = Long.parseLong(auth.getName());
-        String msg = req.message();
 
         try {
             // 유저 채팅 저장
-            chatLogService.saveUserChat(req);
+            chatLogService.saveUserChat(req); 
             
-            // 채팅 답변 생성
-            String resMsg = chatService.getChatResponse(userNum, msg);
-            SenderType type = ChatUtil.checkSenderType(msg);
-            // chatLogService.saveChatbotResponse(userNum, resMsg, type);
+            // 챗봇 답변 생성
+            ChatResponse chatResponse = chatService.getChatResponse(userNum, req.message()); // ChatResponse 타입으로 받음
+            
+            // 챗봇 답변 DB 저장
+            chatLogService.saveChatbotResponse(userNum, chatResponse.message(), chatResponse.senderType()); // 이 메소드는 별도로 구현이 필요함
 
-            return ResponseEntity.ok(resMsg);
+            return ResponseEntity.ok(chatResponse);
         } catch(IllegalAccessException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch(Exception e){
