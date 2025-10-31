@@ -18,8 +18,6 @@ public class MockAiService implements AiService {
 
         String data = String.format(
             "고객님의 나이, 보유 질병(%s), 가족력(%s), 알러지(%s)를 고려하여 AI가 답변합니다.", 
-            msg,
-            userContext.age(),
             userDiseases.isEmpty() ? "없음" : userDiseases,
             userFamilyHistory.isBlank() ? "없음" : userFamilyHistory,
             userAllergies.isEmpty() ? "없음" : userAllergies

@@ -1,34 +1,67 @@
-// 날짜 포맷팅
-export const formatTime = (isoString: string): string => {
+// 날짜 데이터를 Date 객체로 변환
+const safeParseDate = (dateData: any): Date => {
+    let parts: number[] = [];
+
+    if (typeof dateData === 'string') {
+        const cleanedString = dateData.replace(/\s/g, ''); 
+        parts = cleanedString.split(',').map(part => parseInt(part, 10));
+    } else if (Array.isArray(dateData)) {
+        // 2. 배열 형태 바로 숫자로 변환
+        parts = dateData.map(val => parseInt(val, 10));
+    }
+    
+    // 배열 길이 및 유효성 확인
+    if (parts.length === 6 && !parts.some(isNaN)) {
+        const [year, month, day, hour, minute, second] = parts;
+        const date = new Date(year, month - 1, day, hour, minute, second);
+        
+        return date;
+    }
+    
+    console.error("시간 오류", dateData, parts);
+    return new Date(NaN);
+};
+
+// 시간 포맷(오전 00:00)
+export const formatTime = (isoString: any): string => { 
+    if (!isoString) return '';
+    try {
+        const date = safeParseDate(isoString); 
+        
+        if (isNaN(date.getTime())) {
+            return '시간 오류'; 
+        }
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        
+        const ampm = hours >= 12 ? '오후' : '오전';
+        const displayHour = hours % 12 === 0 ? 12 : hours % 12;
+        
+        const paddedHour = String(displayHour).padStart(2, '0');
+        const paddedMinute = String(minutes).padStart(2, '0');
+
+        return `${ampm} ${paddedHour}:${paddedMinute}`;
+        
+    } catch (e) {
+        return '시간 오류';
+    }
+};
+
+// 날짜 포맷 (0000년 00월 00일)
+export const formatDateOnly = (isoString: any): string => {
     if (!isoString) return '';
     
     try {
-        const date = new Date(isoString);
+        const date = safeParseDate(isoString); 
         
-        // Date 객체 확인
-        if (isNaN(date.getTime())) {
-            return isoString;
-        }
-
-        // 시:분 및 오전/오후 표시
-        const formatter = new Intl.DateTimeFormat('ko-KR', {
-            hour: '2-digit',      // 시
-            minute: '2-digit',    // 분
-            hour12: true,         // 12시간제 사용
-        });
-
-        // 포맷 결과에서 띄어쓰기 문제 등을 해결하기 위해 처리
-        let formattedTime = formatter.format(date);
+        if (isNaN(date.getTime())) return '';
         
-        // 1자리 시에 0을 붙여 두 자리로 보정
-        formattedTime = formattedTime.replace(/(\s\d):/g, (match, hour) => {
-            return ` 0${hour.trim()}:`;
-        });
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1); 
+        const day = String(date.getDate());
         
-        return formattedTime.trim();
-
+        return `${year}년 ${month}월 ${day}일`;
     } catch (e) {
-        console.error("날짜 포맷 오류:", e);
-        return isoString;
+        return '날짜 오류';
     }
 };

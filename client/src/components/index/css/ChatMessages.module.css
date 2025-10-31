@@ -10,6 +10,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-md);
+  padding-bottom: 80px;
 }
 
 .messageRow {
@@ -59,4 +60,39 @@
   font-size: 0.6875rem;
   opacity: 0.7;
   align-self: flex-end;
+}
+
+.dateSeparator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 20px 0;
+    position: relative;
+}
+
+.dateSeparator::before {
+    /* 가로선 */
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    top: 50%;
+    /* 선 색상을 border 변수로 설정하여 다크 모드에 대응 */
+    background: var(--color-border); 
+    opacity: 0.5; /* 선 투명도 */
+}
+
+.dateText {
+    font-size: var(--font-size-sm);
+    padding: 0 15px; 
+    z-index: 1;
+    position: relative;
+    
+    /* 텍스트 주변 배경색을 background 변수로 설정하여 다크 모드에 대응 */
+    background-color: var(--color-background); 
+    
+    /* 텍스트 색상을 secondary text로 설정하여 다크 모드에 대응 */
+    color: var(--color-text-secondary); 
+    opacity: 0.8; 
 }
