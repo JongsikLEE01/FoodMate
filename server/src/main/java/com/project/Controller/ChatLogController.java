@@ -53,12 +53,10 @@ public class ChatLogController {
         try {
             // 유저 채팅 저장
             chatLogService.saveUserChat(req); 
-            
             // 챗봇 답변 생성
-            ChatResponse chatResponse = chatService.getChatResponse(userNum, req.message()); // ChatResponse 타입으로 받음
-            
+            ChatResponse chatResponse = chatService.getChatResponse(userNum, req.message());
             // 챗봇 답변 DB 저장
-            chatLogService.saveChatbotResponse(userNum, chatResponse.message(), chatResponse.senderType()); // 이 메소드는 별도로 구현이 필요함
+            chatLogService.saveChatbotResponse(userNum, chatResponse.message(), chatResponse.senderType());
 
             return ResponseEntity.ok(chatResponse);
         } catch(IllegalAccessException e){

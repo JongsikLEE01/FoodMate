@@ -26,7 +26,7 @@ public class ChatService {
 
     // Chat 답변 생성
     public ChatResponse getChatResponse(Long userNum, String msg) throws Exception {
-        ChatUserContext userContext = userService.getChatUserContext(userNum, msg); // UserNum -> userNum
+        ChatUserContext userContext = userService.getChatUserContext(userNum, msg);
 
         // 텍스트 추출
         List<String> keyword = ChatUtil.splitString(msg.toLowerCase().replace(" ", ","));
@@ -61,7 +61,7 @@ public class ChatService {
         }
 
         for (DietRule rule : allRules) {
-            boolean keywordChk = rule.triggerKw().stream().anyMatch(kw -> keyword.contains(kw.toLowerCase()));
+            boolean keywordChk = rule.triggerKw().stream().anyMatch(kw -> keyword.stream().anyMatch(userKw -> userKw.startsWith(kw.toLowerCase()) || userKw.contains(kw.toLowerCase())));
             if (!keywordChk) continue;
 
             boolean allergyChk = rule.allergyEx().stream().anyMatch(allergy -> userContext.allergies().contains(allergy));

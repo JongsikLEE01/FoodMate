@@ -37,32 +37,35 @@ public class AuthController {
     private final OAuthService kakaoOAuthService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    /**
+     * 카카오 로그인
+     * @param requestBody
+     * @return
+     */
     @PostMapping("/kakao/callback")
     public ResponseEntity<JwtResponse> kakaoCallback(@RequestBody Map<String, String> requestBody) {
-        // 1. 요청 본문(Body)에서 code 값 추출
         String code = requestBody.get("code");
-        
         if (code == null) { return ResponseEntity.badRequest().build(); }
         
-        // 2. 인가 코드로 카카오 액세스 토큰 획득
+        // 인가 코드로 카카오 액세스 토큰 획득
         String kakaoAccessToken = kakaoOAuthService.getKakaoAccessToken(code);
         
-        // 3. 카카오 액세스 토큰으로 사용자 정보 획득
+        // 카카오 액세스 토큰으로 사용자 정보 획득
         Map<String, Object> userInfo = kakaoOAuthService.getKakaoUserInfo(kakaoAccessToken);
 
-        // 4. 사용자 정보로 DB에서 조회/가입 처리 및 엔티티 획득 (자동 회원가입)
+        // 사용자 정보로 DB에서 조회/가입 처리 및 엔티티 획득 (자동 회원가입)
         User user = kakaoOAuthService.findOrCreateUser(userInfo);
         
-        // 5. 서비스의 JWT 생성 및 반환
+        // 서비스의 JWT 생성 및 반환
         String accessToken = jwtTokenProvider.createAccessToken(user.getUserNum()); // userNum 기반
         String refreshToken = jwtTokenProvider.createRefreshToken(user.getUserNum()); 
         
-        // 6. 프론트엔드로 응답
+        // 프론트엔드로 응답
         JwtResponse response = new JwtResponse();
         response.accessToken = accessToken;
         response.refreshToken = refreshToken;
         
-        // 신규 사용자 여부 확인 (UserDetail이 없으면 신규 사용자로 간주)
+        // 신규 사용자 여부 확인
         boolean isNewUser = user.getUserDetail() == null;
         response.isNewUser = isNewUser;
         
