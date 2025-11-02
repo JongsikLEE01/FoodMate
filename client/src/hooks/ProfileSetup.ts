@@ -21,7 +21,7 @@ export const useProfileSetup = () => {
     const currentStep: StepInfo = STEPS[step - 1];
     const progress = (step / STEPS.length) * 100;
 
-    // 1. 기존 유저 정보 가져오기 및 폼 데이터 초기화
+    // 기존 유저 정보 가져오기 및 폼 데이터 초기화
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -45,7 +45,7 @@ export const useProfileSetup = () => {
         fetchUser();
     }, []); 
 
-    // 2. 입력 변경 핸들러
+    // 입력 변경 핸들러
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -54,7 +54,7 @@ export const useProfileSetup = () => {
         }));
     }, []);
 
-    // 3. 버튼 옵션 클릭 핸들러 (쉼표 구분 값 토글)
+    // 버튼 옵션 클릭 핸들러
     const handleOptionClick = useCallback((optionValue: string) => {
         const fieldName = currentStep.field as keyof Omit<ProfileSetupForm, 'userNum' | 'userAge'>;
         
@@ -66,7 +66,7 @@ export const useProfileSetup = () => {
             const valuesArray = currentValue.split(',').map(v => v.trim()).filter(v => v.length > 0);
             
             if (valuesArray.includes(optionValue)) {
-                // 이미 있다면 제거 (토글)
+                // 이미 있다면 제거
                 const filteredArray = valuesArray.filter(v => v !== optionValue);
                 newValue = filteredArray.join(', ');
             } else {
@@ -83,14 +83,13 @@ export const useProfileSetup = () => {
         });
     }, [currentStep.field]);
 
-    // 4. 제출/다음 단계 핸들러
+    // 제출/다음 단계 핸들러
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (step < STEPS.length) {
-            setStep(step + 1); // 다음 단계로 이동
+            setStep(step + 1);
         } else {
-            // 마지막 단계: 폼 제출
             try {
                 await saveUserDetail(formData);
                 navigate('/');
@@ -100,7 +99,6 @@ export const useProfileSetup = () => {
         }
     }, [step, formData, navigate]);
 
-    // 5. 스킵 핸들러
     const handleSkip = useCallback(() => navigate('/'), [navigate]);
 
     return {
@@ -108,11 +106,10 @@ export const useProfileSetup = () => {
         formData,
         currentStep,
         progress,
-        setStep, // StepBtn의 onNext에서 setStep(step + 1)을 직접 사용할 수 있도록 노출
+        setStep,
         handleChange,
         handleOptionClick,
         handleSubmit,
         handleSkip,
-        // STEPS는 컴포넌트에서 임포트하여 isLastStep을 계산
     };
 };

@@ -3,6 +3,8 @@ import { sendUserMessage, userChatResponse, userChatRequest, getChatHistory } fr
 import { getUserNumFromToken } from '../api/auth';
 import { useCoin } from './Coin';
 import axios from 'axios';
+import { showAlert, showConfirm } from '../utils/modalUtil'; 
+import { useNavigate } from 'react-router-dom'; 
 
 export interface Message extends Omit<userChatResponse, 'userNum'> {} 
 
@@ -19,6 +21,7 @@ export const useChatLogic = () => {
     const [userNum, setUserNum] = useState<number | null>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const { coin, setCoin } = useCoin();
+    const navigate = useNavigate(); 
 
     // 스크롤 함수
     const scrollToBottom = useCallback(() => {
@@ -27,7 +30,7 @@ export const useChatLogic = () => {
 
     // 초기 로드 및 스크롤 처리
     useEffect(() => {
-        // 1사용자 번호 로드 및 인증 확인
+        // 사용자 번호 로드 및 인증 확인
         const num = getUserNumFromToken();
         if (num !== null) {
             setUserNum(num);
@@ -66,7 +69,7 @@ export const useChatLogic = () => {
         
     }, []);
 
-    // 메시지 업데이트될 때마다 스크롤 (변경 없음)
+    // 메시지 업데이트될 때마다 스크롤
     useEffect(() => {
         scrollToBottom();
     }, [messages, scrollToBottom]);
@@ -75,12 +78,22 @@ export const useChatLogic = () => {
     const handleSubmit = useCallback(async () => {
         // 유효성 검사
         if (!message.trim() || isLoading || userNum === null) {
-            if (userNum === null) alert("사용자 정보가 없어 메시지를 보낼 수 없습니다.");
+            const goToLogin = await showConfirm(
+                "다시 로그인이 필요합니다. 로그인 페이지로 이동하시겠습니까?", 
+                '로그인',
+            );
+
+            if (goToLogin) navigate('/login');
             return;
         }
 
         if (coin != null && coin <= 0) {
-            alert("코인이 부족합니다. 충전페이지로 이동할까요?");
+            const goToCharge = await showConfirm(
+                "채팅을 이용하려면 코인이 필요합니다. 충전 페이지로 이동하시겠습니까?", 
+                '코인 부족',
+            );
+
+            if (goToCharge) navigate('/charge'); // TODO : 충전 페이지 경로 변경 필요
             return;
         }
 
@@ -97,7 +110,7 @@ export const useChatLogic = () => {
         };
         setMessages(prev => [...prev, optimisticMessage]);
 
-        // 사용자 질문 DB 저장
+        // 사용자 질문 DB 저장 및 AI 응답 요청
         try {
             const requestData: userChatRequest = {
                 userNum: userNum,
@@ -138,14 +151,15 @@ export const useChatLogic = () => {
                 }
             }
 
+            // 메시지 복구 및 낙관적 메시지 제거
             setMessage(userMessageText);
             setMessages(prev => prev.filter(msg => msg.chatId !== optimisticMessage.chatId)); 
             
-            alert(errorMsg);
+            await showAlert(errorMsg, 'error', '전송 실패'); 
         } finally {
             setIsLoading(false);
         }
-    }, [message, isLoading, userNum, coin, setCoin]); 
+    }, [message, isLoading, userNum, coin, setCoin, navigate]); // navigate를 의존성 배열에 추가
 
     return {
         messages,

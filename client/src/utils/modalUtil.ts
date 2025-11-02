@@ -13,7 +13,7 @@ export const initModalUtils = (showFn: (props: any) => void) => {
 export const showAlert = (message: string, type: Exclude<ModalType, 'confirm'> = 'alert', title?: string): Promise<void> => {
     return new Promise((resolve) => {
         if (!globalShowModal) {
-            console.error("ModalProvider가 렌더링되지 않았습니다.");
+            console.error("모달이 렌더링되지 않았습니다.");
             return resolve();
         }
         
@@ -33,7 +33,7 @@ export const showAlert = (message: string, type: Exclude<ModalType, 'confirm'> =
 export const showConfirm = (message: string, title: string = '확인 요청'): Promise<boolean> => {
     return new Promise((resolve) => {
         if (!globalShowModal) {
-            console.error("ModalProvider가 렌더링되지 않았습니다.");
+            console.error("모달이 렌더링되지 않았습니다.");
             return resolve(false);
         }
         

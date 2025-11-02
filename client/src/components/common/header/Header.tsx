@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './css/Header.module.css';
 import banner from '../../../assets/images/FoodMate_Bannerr.png'
 import { useCoin } from '../../../hooks/Coin'
+// 모달 유틸리티 임포트
+import { showConfirm } from '../../../utils/modalUtil'; 
 
 const Header: React.FC = () => {
     const navigate = useNavigate();
@@ -10,14 +12,18 @@ const Header: React.FC = () => {
     const { coin } = useCoin();
     const isMyPage = location.pathname === '/mypage'
 
-    const handLeftBtnClick = () => {
-        // TODO : 코인 충전 이동 등으로 로직 추가
-        alert("코인 충전 페이지로 리다이렉트 예정...")
+    const handLeftBtnClick = async () => {
+        const goToCharge = await showConfirm(
+            "코인 충전 페이지로 이동하시겠습니까?",
+            '코인 충전',
+        );
+
+        if (goToCharge)  navigate('/charge');
     }
 
     return (
         <header className={styles.header}>
-           <div className={styles.leftSection} onClick={handLeftBtnClick}>
+            <div className={styles.leftSection} onClick={handLeftBtnClick}>
                 <span className={styles.coinText}>
                     남은 코인 : 
                     <strong style={{ marginLeft: '5px', color: '#FFD700' }}>

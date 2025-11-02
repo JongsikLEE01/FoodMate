@@ -8,8 +8,7 @@ import UserInfoCheck from "./pages/user/infoCheck";
 import { getAccessToken } from "./utils/tokenUtils";
 import './styles/global.css';
 import { CoinProvider } from './hooks/Coin';
-import { ModalProvider } from './components/common/Modal/ModalProvider'; // index.ts에서 import
-import TestModal from './components/testmodal';
+import { ModalProvider } from './components/common/Modal/ModalProvider';
 
 
 // 토큰 유무에 따라 접근을 제어
@@ -58,8 +57,6 @@ function App() {
                         />
                         
                     </Routes>
-                    {/* 모달 테스트용 */}
-                    {/* <TestModal />  */}
                 </ModalProvider>
             </BrowserRouter>
         </CoinProvider>
