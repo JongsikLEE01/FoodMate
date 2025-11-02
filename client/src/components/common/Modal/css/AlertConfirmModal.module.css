@@ -1,0 +1,117 @@
+/* src/components/common/Modal/AlertConfirmModal.module.css */
+
+/* 1. Wrapper (전체 화면 덮기) */
+.modalWrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* 배경: Gray-900을 사용해 투명도 적용 */
+    background-color: rgba(var(--color-gray-900), 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* 2. Content (모달 본체) */
+.modalContent {
+    width: 90%;
+    max-width: 320px;
+    /* 배경: Surface 사용 */
+    background-color: var(--color-surface); 
+    /* 모서리 둥글게: radius-md 사용 */
+    border-radius: var(--radius-md); 
+    padding-top: var(--space-md);
+    /* 그림자: shadow-lg 사용 */
+    box-shadow: var(--shadow-lg); 
+}
+
+/* 3. Header/Message Area */
+.modalHeader {
+    text-align: center;
+    padding: 0 var(--space-lg); /* 좌우 패딩: 24px */
+}
+
+.modalIcon {
+    /* 아이콘을 제목 위에 크게 배치 */
+    font-size: var(--font-size-2xl); 
+    margin-bottom: var(--space-sm);
+}
+
+.modalTitle {
+    /* 제목 스타일 */
+    margin: 0 0 var(--space-sm);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold, 700); /* Noto Sans KR wght 700 */
+    color: var(--color-text); /* 색상은 AlertConfirmModal.tsx에서 동적 적용 */
+}
+
+.modalMessage {
+    /* 메시지 스타일 */
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-secondary);
+    /* overflow-wrap: break-word; 는 body에 정의됨 */
+}
+
+/* 4. Button Area (모바일 UX 최적화) */
+.modalButtonArea {
+    display: flex;
+    flex-direction: row;
+    /* 구분선: border 색상 사용 */
+    border-top: 1px solid var(--color-border);
+}
+
+.modalButton {
+    /* 공통 버튼 스타일 */
+    flex: 1;
+    height: 48px; /* 모바일 터치 영역 최소 48px */
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: var(--font-size-base);
+    transition: background-color var(--transition-fast) var(--ease-in-out);
+}
+
+.modalButton:active {
+    /* 버튼 클릭 시 시각적 피드백 */
+    background-color: var(--color-gray-100); 
+}
+
+/* Confirm 타입: 버튼 두 개가 50:50 */
+.modalButtonArea > .modalButton:first-child:not(:only-child) {
+    /* 버튼이 두 개일 때 첫 번째 버튼에만 오른쪽 구분선 */
+    border-right: 1px solid var(--color-border);
+}
+
+/* 4-1. 취소 버튼 (보조적인 역할) */
+.cancelButton {
+    color: var(--color-gray-700);
+}
+
+/* 4-2. 확인 버튼 (일반적인 스타일 - Confirm/Alert) */
+.confirmButton {
+    font-weight: 500; /* Noto Sans KR wght 500 */
+}
+
+/* 5. 타입별 배경색 (Alert/Success/Error 타입의 배경색 결정) */
+/* Confirm 타입의 '확인' 버튼은 배경색 없이 텍스트만 accent 색상 사용 */
+/* Alert, Success, Error 타입은 배경색을 사용하여 강조 */
+
+.defaultType { /* Alert 타입 */
+    background: var(--color-primary); 
+    color: var(--color-surface);
+}
+
+.success {
+    background: var(--color-success);
+    color: var(--color-surface);
+}
+
+.error {
+    background: var(--color-error);
+    color: var(--color-surface);
+}
