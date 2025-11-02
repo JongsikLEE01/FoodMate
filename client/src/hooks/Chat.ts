@@ -96,8 +96,15 @@ export const useChatLogic = () => {
             if (goToCharge) navigate('/charge'); // TODO : 충전 페이지 경로 변경 필요
             return;
         }
-
+        
         const userMessageText = message.trim();
+        const MAX_LENGTH = 100;
+
+        if (userMessageText.length > MAX_LENGTH) {
+            await showAlert(`메시지는 ${MAX_LENGTH}자를 초과할 수 없습니다.`, 'error', '입력 제한');
+            return;
+        }
+
         setMessage('');
         setIsLoading(true);
 
