@@ -18,11 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${JWT_KEY}")
+    @Value("${jwt.key}")
     private String secretKey;
-    @Value("${JWT_EXPIRATION}")
+    @Value("${jwt.expiration.token}")
     private long accessToken;
-    @Value("${JWT_REFRESH}")
+    @Value("${jwt.refresh.token}")
     private long refreshToken;
     private Key key;
 

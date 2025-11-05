@@ -23,7 +23,7 @@ public class GeminiAiService implements AiService {
     private static final String MODEL_NAME = "gemini-2.5-flash";
 
     // API 키 주입
-    public GeminiAiService(WebClient.Builder webClientBuilder, @Value("${GEMINI_API_KEY}") String apiKey, @Value("${GEMINI_API_URL}") String apiUrl){
+    public GeminiAiService(WebClient.Builder webClientBuilder, @Value("${gemini.api.key}") String apiKey, @Value("${gemini.api.url}") String apiUrl){
         this.geminiApiKey = apiKey;
         this.webClient = webClientBuilder.baseUrl(apiUrl).defaultHeader("Content-Type", "application/json").build();
     }

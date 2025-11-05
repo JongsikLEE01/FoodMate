@@ -30,16 +30,15 @@ public class OAuthService {
             
     private final UserRepository userRepository;
     
-    @Value("${KAKAO_KEY}") 
+    @Value("${kakao.key}") 
     private String kakaoKey;
-    // Optional client secret (leave empty if not configured in Kakao app)
     @Value("${KAKAO_SECRET:}")
     private String kakaoSecret;
-    @Value("${KAKAO_REDIRECT_URL}")
+    @Value("${kakao.redirect.url}")
     private String redirectUri;
-    @Value("${KAKAO_TOKEN_URL}")
+    @Value("${kakao.token.url}")
     private String tokenUri;
-    @Value("${KAKAO_USER_INFO_URL}")
+    @Value("${kakao.user.info.url}")
     private String userInfoUri;
 
     // 1. 인가 코드로 Kakao Access Token을 받기
