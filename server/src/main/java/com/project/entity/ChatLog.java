@@ -28,6 +28,7 @@ public class ChatLog {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_NUM", nullable = false)
     private User user;              // user테이블과 매핑
+    @Lob
     @Column(name = "MESSAGE")
     private String message;         // 메세지
     @Enumerated(EnumType.STRING)

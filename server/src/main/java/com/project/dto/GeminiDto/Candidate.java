@@ -1,5 +1,11 @@
 package com.project.dto.GeminiDto;
 
-public record Candidate(Content content) {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public record Candidate(
+    Content content,
+    int index
+) {
     
 } 

@@ -2,6 +2,12 @@ package com.project.dto.GeminiDto;
 
 import java.util.List;
 
-public record GeminiRequest(List<Content> contents, Config conig) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record GeminiRequest(
+    List<Content> contents, 
+    @JsonProperty("generationConfig")
+    Config config
+) {
 
 }

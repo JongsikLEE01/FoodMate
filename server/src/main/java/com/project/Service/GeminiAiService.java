@@ -30,10 +30,11 @@ public class GeminiAiService implements AiService {
 
     // gemini 호출
     @Override
-    public String callAi(ChatUserContext userContext, String msg) {
+    public String callAi(ChatUserContext userContext, String msg) {        
         // 프롬프트 및 문맥 준비
+        String name = userContext.name();
         String contextString = buildUserContent(userContext);
-        String userData = String.format("당신은 맞춤형 식단 추천 AI 푸드메이트입니다. %s 이 정보를 바탕으로 사용자의 질문에 친절하고 유용한 식단 조언을 한국어로 200자 이내로 의학적 지식에 기반해 간결하게 제공하세요.", contextString);
+        String userData = String.format("당신은 맞춤형 식단 추천 AI 푸드메이트입니다. 유저의 이름은 %s 이고, %s 이 정보를 바탕으로 사용자의 질문에 친절하고 유용한 식단 조언을 한국어로 200자 이내로 의학적 지식에 기반해 간결하게 제공하세요.", name, contextString);
         String aiPrompt = userData + "\n\n" + "사용자의 질문 : " + msg;
 
         // 메세지 본문 생성

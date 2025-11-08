@@ -26,6 +26,8 @@ public class UserService {
     public ChatUserContext getChatUserContext(Long userNum, String msg) {
         UserDetail userDetail = userDetailRepository.findByUserNum(userNum)
             .orElseThrow(() -> new IllegalArgumentException("해당 유저의 상세 정보를 찾을 수 없습니다."));
+        User user = userRepository.findByUserNum(userNum)
+            .orElseThrow(() -> new IllegalArgumentException("해당 유저를 찾을 수 없습니다."));
 
         List<String> diseases = ChatUtil.splitString(userDetail.getDisease());
         List<String> allergies = ChatUtil.splitString(userDetail.getAllergy());
@@ -34,6 +36,7 @@ public class UserService {
         ChatUserContext chatUserContext = new ChatUserContext(
                 userNum, 
                 userDetail.getUserAge(), 
+                user.getUserName(), 
                 diseases, 
                 allergies, 
                 familyHistory, 

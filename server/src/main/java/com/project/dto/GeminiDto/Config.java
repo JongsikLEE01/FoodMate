@@ -1,5 +1,10 @@
 package com.project.dto.GeminiDto;
 
-public record Config(Double temp) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record Config(
+    @JsonProperty("temperature")
+    Double temp
+) {
     
 }
